@@ -1,7 +1,7 @@
 {
   "name": "generator-trigen-frontend",
   "version": "1.0.0",
-  "description": "Generator for frontend development.",
+  "description": "Yeoman generator for frontend development.",
   "main": "generators/index.js",
   "repository": "https://github.com/TrigenSoftware/generator-trigen-frontend",
   "author": "dangreen",
