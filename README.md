@@ -22,4 +22,4 @@ yo trigen-frontend
 
 # To do
 
-- [] Update method 
+- [ ] Update method 
