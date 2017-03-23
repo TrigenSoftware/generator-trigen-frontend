@@ -24,9 +24,6 @@ class GeneratorTrigenFrontend extends Generator {
 		this.props = {};
 		this.pkgProps = false;
 		this.pkg = false;
-
-		this.deps = false;
-		this.devDeps = false;
 	}
 
 	_package() {
@@ -167,9 +164,6 @@ class GeneratorTrigenFrontend extends Generator {
 
 		let { pkg } = this;
 
-		this.deps = Object.keys(targetPkg.dependencies);
-		this.devDeps = Object.keys(targetPkg.devDependencies);
-
 		if (!pkgProps) {
 			return;
 		}
@@ -184,6 +178,9 @@ class GeneratorTrigenFrontend extends Generator {
 		pkg.scripts = targetPkg.scripts;
 		pkg.browsers = targetPkg.browsers;
 		pkg.babel = targetPkg.babel;
+
+		pkg.dependencies = targetPkg.dependencies;
+		pkg.devDependencies = targetPkg.devDependencies;
 
 		this.pkg = pkg;
 	}
@@ -216,39 +213,37 @@ class GeneratorTrigenFrontend extends Generator {
 			this.fs.copy(from, to);
 		});
 
-		let projectFiles = null,
-			readmeFile = null;
+		const projectFiles = [];
+
+		let projectDir = null;
 
 		switch (props.projectType) {
 
 			case 'JavaScript':
-				readmeFile = this.templatePath('js/README.md');
-				projectFiles = [
-					this.templatePath('js/.eslintrc.js'),
-					this.templatePath('js/**/*'),
-					`!${this.templatePath('js/package.json')}`,
-					`!${readmeFile}`
-				];
+				projectDir = 'js';
+				projectFiles.push(this.templatePath(`${projectDir}/.eslintrc.js`));
 				break;
 
 			case 'ReactJS':
-				readmeFile = this.templatePath('reactjs/README.md');
-				projectFiles = [
-					this.templatePath('reactjs/.eslintrc.js'),
-					this.templatePath('reactjs/**/*'),
-					`!${this.templatePath('reactjs/package.json')}`,
-					`!${readmeFile}`
-				];
+				projectDir = 'reactjs';
+				projectFiles.push(this.templatePath(`${projectDir}/.eslintrc.js`));
 				break;
 
 			case 'Simple': default:
-				readmeFile = this.templatePath('simple/README.md');
-				projectFiles = [
-					this.templatePath('simple/**/*'),
-					`!${this.templatePath('simple/package.json')}`,
-					`!${readmeFile}`
-				];
+				projectDir = 'simple';
 				break;
+		}
+		
+		const readmeFile = this.templatePath(`${projectDir}/README.md`);
+
+		projectFiles.push(
+			this.templatePath(`${projectDir}/*`),
+			`!${this.templatePath(`${projectDir}/package.json`)}`,
+			`!${readmeFile}`
+		);
+
+		if (!this.fs.exists(this.destinationPath('src/index.html'))) {
+			projectFiles.push(this.templatePath(`${projectDir}/src/**/*`));
 		}
 
 		if (pkgProps) {
@@ -262,18 +257,13 @@ class GeneratorTrigenFrontend extends Generator {
 		return new Promise((resolve) => {
 			hasbin.first(['yarn', 'npm'], (pm) => {
 
-				switch (pm) {
+				const useYarn = pm != 'npm';
 
-					case 'npm':
-						this.npmInstall(this.deps, { 'save': true });
-						this.npmInstall(this.devDeps, { 'save-dev': true });
-						break;
-
-					case 'yarn': default:
-						this.yarnInstall(this.deps);
-						this.yarnInstall(this.devDeps, { 'dev': true });
-						break;
-				}
+				this.installDependencies({
+					bower: false,
+					npm:   !useYarn,
+					yarn:  useYarn
+				});
 
 				resolve();
 			});
