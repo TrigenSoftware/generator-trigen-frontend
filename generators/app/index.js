@@ -233,7 +233,7 @@ class GeneratorTrigenFrontend extends Generator {
 				projectDir = 'simple';
 				break;
 		}
-		
+
 		const readmeFile = this.templatePath(`${projectDir}/README.md`);
 
 		projectFiles.push(
