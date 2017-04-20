@@ -3,7 +3,7 @@
 
 <%= description %>
 
-# Gulp tasks
+## Gulp tasks
 
 ```
 ├── html:watch
@@ -39,3 +39,5 @@
 └─┬ default
   └── dev
 ```
+
+> This project generated with [generator-trigen-frontend](https://www.npmjs.com/package/generator-trigen-frontend)

@@ -8,6 +8,35 @@
 
 const notify_ = require('gulp-notify');
 
+const skipNotifyThrottleTimeout = 1200;
+
+let skipNotify = false,
+	skipNotifyTimeout = null;
+
+function skipNotifyThrottle(fn, timeout) {
+	return (maybeCallback, ...args) => {
+
+		if (skipNotify) {
+
+			if (typeof maybeCallback == 'function') {
+				maybeCallback();
+			}
+
+		} else {
+			skipNotify = true;
+			fn(maybeCallback, ...args);
+		}
+
+		if (skipNotifyTimeout !== null) {
+			clearTimeout(skipNotifyTimeout);
+		}
+
+		skipNotifyTimeout = setTimeout(() => {
+			skipNotify = false;
+		}, timeout);
+	};
+}
+
 /**
  * Notify proxy
  */
@@ -25,14 +54,24 @@ function notify(message, now) {
 		return null;
 	}
 
-	return notify_({
+	const notification = notify_({
 		message,
 		sound:  'Glass',
 		onLast: true
 	});
+
+	notification._flush = skipNotifyThrottle(
+		notification._flush.bind(notification),
+		skipNotifyThrottleTimeout
+	);
+
+	return notification;
 }
 
-notify.onError = notify_.onError('Error: <%= error.message %>');
+notify.onError = skipNotifyThrottle(
+	notify_.onError('Error: <%= error.message %>'),
+	skipNotifyThrottleTimeout
+);
 
 /**
  * Error reporter helper
@@ -66,27 +105,28 @@ function reportError(error) {
 };
 
 /**
- * Extend gulp-connect
+ * Helper for set icons to webmanifset
  */
 
-exports.extendGulpConnect =
-function extendGulpConnect(gulpConnect) {
+exports.setIcons =
+function setIcons(teleport) {
+	return (manifest) => {
 
-	const origServerMethod = gulpConnect.server,
-		apps = [];
+		const { icons } = JSON.parse(teleport.get('webmanifest', true).shift());
 
-	gulpConnect.server = (options) => {
+		manifest.icons = icons;
 
-		const app = origServerMethod(options);
-
-		return apps.push(app);
+		return manifest;
 	};
+};
 
-	gulpConnect.changed = (files) => {
-		apps.forEach((app) => {
-			app.lr.changed({
-				body: { files }
-			});
-		});
-	};
+/**
+ * Helper for prepare favincons html
+ */
+
+exports.faviconsReplacer =
+function faviconsReplacer(teleport) {
+	return () => teleport.get('favicons', true)
+		.join('')
+		.replace(/(\s\n)*<link\s+rel=("|'|)manifest("|'|)\s*[^>]+(\/|)>/, '');
 };

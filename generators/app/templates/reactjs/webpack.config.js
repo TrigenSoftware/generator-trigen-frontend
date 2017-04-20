@@ -32,19 +32,26 @@ module.exports = config;
  * Configurators
  */
 
-function configure(entry, dest) {
+function configure(entry, dest, _publicPath) {
 
 	const entries = Array.isArray(entry)
 		? entry
 		: [entry];
 
+	let publicPath = _publicPath;
+
+	if (typeof publicPath != 'string') {
+		publicPath = path.join(path.basename(dest), '/');
+	}
+
 	return {
-		entry:  entries.map(_ => path.resolve(_)),
-		output: {
-			path:     path.join(__dirname, dest),
-			filename: '[name].js'
+		entry:   entries.map(_ => path.resolve(_)),
+		output:  {
+			path:     path.resolve(__dirname, dest),
+			filename: '[name].js',
+			publicPath
 		},
-		module: {
+		module:  {
 			rules: [{
 				test:    /\.js$/,
 				exclude: /node_modules/,
@@ -56,21 +63,20 @@ function configure(entry, dest) {
 					}
 				})
 			}]
-		}
+		},
+		plugins: []
 	};
 }
 
-function configureDev(entry, dest) {
-	return update(configure(entry, dest), {
+function configureDev(entry, dest, publicPath) {
+	return update(configure(entry, dest, publicPath), {
 		entry:   { $push: [
 			'react-hot-loader/patch',
-			'webpack-dev-server/client?http://localhost:8080/',
-			'webpack/hot/only-dev-server'
+			'webpack-hot-middleware/client?http://localhost:8080/'
 		] },
 		devtool: { $set: 'cheap-module-eval-source-map' },
-		output:  { publicPath: { $set: '/app' } },
 		module:  { rules: { 0: { query: { plugins: { $unshift: ['react-hot-loader/babel'] } } } } },
-		plugins: { $set: [
+		plugins: { $push: [
 			new webpack.DefinePlugin({
 				'process.env': {
 					'NODE_ENV': `'development'`
@@ -83,9 +89,9 @@ function configureDev(entry, dest) {
 	});
 }
 
-function configureBuild(entry, dest) {
-	return update(configure(entry, dest), {
-		plugins: { $set: [
+function configureBuild(entry, dest, publicPath) {
+	return update(configure(entry, dest, publicPath), {
+		plugins: { $push: [
 			new webpack.DefinePlugin({
 				'process.env': {
 					'NODE_ENV': `'production'`
