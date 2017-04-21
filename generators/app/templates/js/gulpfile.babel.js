@@ -12,6 +12,7 @@ import './tasks/favicon';
 import './tasks/webmanifest';
 import './tasks/images';
 import './tasks/style';
+import './tasks/script';
 
 gulp.task('copy', () =>
 	gulp.src(paths.src.copy)
@@ -29,7 +30,8 @@ gulp.task('watch', gulp.parallel(
 	'favicon:watch',<% } %><% if (gulpTasks.includes('webmanifest')) { %>
 	'webmanifest:watch',<% } %>
 	'images:watch',
-	'style:watch'
+	'style:watch',
+	'script:watch'
 ));
 
 gulp.task('dev', gulp.series(
@@ -42,7 +44,8 @@ gulp.task('dev', gulp.series(
 		),<% if (gulpTasks.includes('favicon')) { %>
 		'favicon:dev',<% } %><% if (gulpTasks.includes('webmanifest')) { %>
 		'webmanifest:dev',<% } %>
-		'images:dev'
+		'images:dev',
+		'script:dev'
 	),
 	'watch'
 ));
@@ -57,7 +60,8 @@ gulp.task('build', gulp.series(
 		),<% if (gulpTasks.includes('favicon')) { %>
 		'favicon:build',<% } %><% if (gulpTasks.includes('webmanifest')) { %>
 		'webmanifest:build',<% } %>
-		'images:build'
+		'images:build',
+		'script:build'
 	)
 ));
 

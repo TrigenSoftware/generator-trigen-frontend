@@ -12,6 +12,7 @@ import './tasks/favicon';
 import './tasks/webmanifest';
 import './tasks/images';
 import './tasks/style';
+import './tasks/webpack';
 
 gulp.task('copy', () =>
 	gulp.src(paths.src.copy)
@@ -29,13 +30,14 @@ gulp.task('watch', gulp.parallel(
 	'favicon:watch',<% } %><% if (gulpTasks.includes('webmanifest')) { %>
 	'webmanifest:watch',<% } %>
 	'images:watch',
-	'style:watch'
+	'style:watch',
+	'script:watch'
 ));
 
 gulp.task('dev', gulp.series(
-	'server',
 	gulp.parallel(
 		'copy',
+		'webpack:dev',
 		gulp.series(
 			'style:dev',
 			'html:dev'
@@ -57,7 +59,8 @@ gulp.task('build', gulp.series(
 		),<% if (gulpTasks.includes('favicon')) { %>
 		'favicon:build',<% } %><% if (gulpTasks.includes('webmanifest')) { %>
 		'webmanifest:build',<% } %>
-		'images:build'
+		'images:build',
+		'webpack:build'
 	)
 ));
 
