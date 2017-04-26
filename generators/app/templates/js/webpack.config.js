@@ -3,21 +3,22 @@
  */
 
 /**
- * Requirements
+ * Imports
  */
 
-const webpack = require('webpack'),
-	WebpackBabiliPlugin = require('babili-webpack-plugin'),
+import webpack                    from 'webpack';
+import WebpackBabiliPlugin        from 'babili-webpack-plugin';
+import WebpackChunkHash           from 'webpack-chunk-hash';
+import WebpackManifestPlugin      from 'webpack-manifest-plugin';
+import WebpackChunkManifsetPlugin from 'chunk-manifest-webpack-plugin';
+import update                     from 'immutability-helper';
+import path                       from 'path';
+import pkg                        from './package.json';
 
-	update = require('immutability-helper'),
-	path = require('path'),
+const defaultEntry = process.env.WEBPACK_ENTRY || './src/app/main.js';
+const defaultDest  = process.env.WEBPACK_OUTPUT_PATH || './dist/app';
 
-	pkg = require('./package.json'),
-
-	defaultEntry = process.env.WEBPACK_ENTRY || './src/app/main.js',
-	defaultDest  = process.env.WEBPACK_OUTPUT_PATH || './dist/app',
-
-	config = configure(defaultEntry, defaultDest);
+const config = configure(defaultEntry, defaultDest);
 
 /**
  * Exports
@@ -26,7 +27,7 @@ const webpack = require('webpack'),
 Reflect.defineProperty(config, 'dev', { value: configureDev });
 Reflect.defineProperty(config, 'build', { value: configureBuild });
 
-module.exports = config;
+export default config;
 
 /**
  * Configurators
@@ -47,8 +48,10 @@ function configure(entry, dest, _publicPath) {
 	return {
 		entry:   entries.map(_ => path.resolve(_)),
 		output:  {
-			path:     path.resolve(__dirname, dest),
-			filename: '[name].js',
+			path:             path.resolve(__dirname, dest),
+			filename:         '[name].js',
+			chunkFilename:    '[name].js',
+			hashDigestLength: 10,
 			publicPath
 		},
 		module:  {
@@ -77,20 +80,40 @@ function configureDev(entry, dest, publicPath) {
 					'NODE_ENV': `'development'`
 				}
 			}),
+			new webpack.NamedModulesPlugin(),
 			new webpack.NoEmitOnErrorsPlugin()
 		] }
 	});
 }
 
 function configureBuild(entry, dest, publicPath) {
-	return update(configure(entry, dest, publicPath), {
+
+	const config = configure(entry, dest, publicPath);
+
+	return update(config, {
+		output:  {
+			filename:      { $set: '[name]-[chunkhash].js' },
+			chunkFilename: { $set: '[name]-[chunkhash].js' }
+		},
 		plugins: { $push: [
+			new webpack.optimize.CommonsChunkPlugin({
+				name:      ['loader'],
+				minChunks: Infinity,
+			}),
 			new webpack.DefinePlugin({
 				'process.env': {
 					'NODE_ENV': `'production'`
 				}
 			}),
-			new webpack.optimize.OccurrenceOrderPlugin(),
+			new webpack.HashedModuleIdsPlugin(),
+			new WebpackChunkHash(),
+			new WebpackManifestPlugin({
+				fileName: 'rev-manifest.json',
+				basePath: config.publicPath
+			}),
+			new WebpackChunkManifsetPlugin({
+				filename: 'webpack-manifest.json'
+			}),
 			new WebpackBabiliPlugin()
 		] }
 	});

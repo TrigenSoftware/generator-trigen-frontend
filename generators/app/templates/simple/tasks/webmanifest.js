@@ -2,8 +2,10 @@
  * Web manifest tasks
  */
 
-import gulp       from 'gulp';<% if (gulpTasks.includes('favicon')) { %>
+import gulp       from 'gulp';
 import teleport   from 'gulp-teleport';
+import rev        from 'gulp-rev';
+import revReplace from 'gulp-rev-replace';<% if (gulpTasks.includes('favicon')) { %>
 import json       from 'gulp-json-editor';<% } %>
 import notify     from './helpers/notify';
 import { server } from './server';
@@ -43,8 +45,15 @@ gulp.task('webmanifest:build', () =>
 	gulp.src(paths.src.manifest)
 		.pipe(teleport.wait('favicon'))
 		.pipe(setIcons())
+		.pipe(revReplace({
+			manifest:            teleport.stream('favicons-rev-manifest'),
+			replaceInExtensions: ['.json']
+		}))
+		.pipe(rev())
 		.pipe(gulp.dest(paths.dist.root))
+		.pipe(rev.manifest())
 		.pipe(notify('Web manifset is compiled.'))
+		.pipe(teleport.to('webmanifest-rev-manifest'))
 );<% } else { %>
 gulp.task('webmanifest:dev', () =>
 	gulp.src(paths.src.manifest)
@@ -55,6 +64,13 @@ gulp.task('webmanifest:dev', () =>
 
 gulp.task('webmanifest:build', () =>
 	gulp.src(paths.src.manifest)
+		.pipe(revReplace({
+			manifest:            teleport.stream('favicons-rev-manifest'),
+			replaceInExtensions: ['.json']
+		}))
+		.pipe(rev())
 		.pipe(gulp.dest(paths.dist.root))
+		.pipe(rev.manifest())
 		.pipe(notify('Web manifset is compiled.'))
+		.pipe(teleport.to('webmanifest-rev-manifest'))
 );<% } %>

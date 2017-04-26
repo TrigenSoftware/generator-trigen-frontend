@@ -3,6 +3,9 @@
  */
 
 import gulp          from 'gulp';
+import teleport      from 'gulp-teleport';
+import rev           from 'gulp-rev';
+import revReplace    from 'gulp-rev-replace';
 import sassModulesImporter from 'sass-modules-importer';
 import sass          from 'gulp-sass';
 import sourcemaps    from 'gulp-sourcemaps';
@@ -49,11 +52,17 @@ gulp.task('style:build', gulp.series('style:lint', () =>
 	gulp.src(paths.src.styles)
 		.pipe(sass({ importer: sassModulesImporter() }))
 		.on('error', errorReporter)
+		.pipe(revReplace({
+			manifest: teleport.stream('images-rev-manifest')
+		}))
 		.pipe(autoprefixer(autoprefixerOptions))
 		.pipe(cssnano({
 			reduceIdents: false,
 			zindex:       false
 		}))
+		.pipe(rev())
 		.pipe(gulp.dest(paths.dist.root))
+		.pipe(rev.manifest())
 		.pipe(notify('Styles are compiled.'))
+		.pipe(teleport.to('style-rev-manifest'))
 ));

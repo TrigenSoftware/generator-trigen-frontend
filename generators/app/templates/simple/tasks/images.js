@@ -3,6 +3,8 @@
  */
 
 import gulp       from 'gulp';
+import teleport   from 'gulp-teleport';
+import rev        from 'gulp-rev';
 import srcset     from 'gulp-srcset';
 import notify     from './helpers/notify';
 import { server } from './server';
@@ -36,6 +38,9 @@ gulp.task('images:build', () =>
 		}, {
 			match:  '**/*.svg'
 		}]))
+		.pipe(rev())
 		.pipe(gulp.dest(paths.dist.root))
+		.pipe(rev.manifest())
 		.pipe(notify('Images are generated.'))
+		.pipe(teleport.to('images-rev-manifest'))
 );

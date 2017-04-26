@@ -4,6 +4,8 @@
 
 import gulp                 from 'gulp';
 import gutil                from 'gulp-util';
+import teleport             from 'gulp-teleport';
+import TeleportFs           from 'gulp-teleport/lib/fs';
 import esLint               from 'gulp-eslint';
 import webpack              from 'webpack';
 import WebpackDevMiddleware from 'webpack-dev-middleware';
@@ -23,6 +25,15 @@ const webpackBuildCompiler = webpack(webpackConfig.build(
 	paths.src.scripts[0],
 	paths.dist.app
 ));
+
+webpackBuildCompiler.outputFileSystem = new TeleportFs((stream) => {
+
+	stream('**/rev-manifest.json')
+		.pipe(teleport.to('script-rev-manifest'));
+
+	stream('**/webpack-manifest.json')
+		.pipe(teleport.to('webpack-manifest'));
+});
 
 const webpackDevMiddleware = WebpackDevMiddleware(webpackDevCompiler, {
 	publicPath:  webpackDevCompiler.options.output.publicPath,
