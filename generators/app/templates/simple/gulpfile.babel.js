@@ -61,4 +61,9 @@ gulp.task('build', gulp.series(
 	)
 ));
 
+gulp.task('test', gulp.series(
+	'html:lint',
+	'style:lint'
+));
+
 gulp.task('default', gulp.series('dev'));

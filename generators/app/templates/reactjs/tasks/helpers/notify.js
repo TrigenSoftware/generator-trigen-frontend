@@ -60,6 +60,6 @@ export default function notify(message, now) {
 }
 
 notify.onError = skipNotifyThrottle(
-	notify_.onError('Error: <%= error.message %>'),
+	notify_.onError('Error: <%%= error.message %>'),
 	skipNotifyThrottleTimeout
 );

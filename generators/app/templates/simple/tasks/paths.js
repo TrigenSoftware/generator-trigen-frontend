@@ -2,7 +2,7 @@
  * Paths
  */
 <% if (gulpTasks.includes('webmanifest')) { %>
-export default const paths = {
+export default {
 	src:  {
 		html:    'src/**/*.html',<% if (gulpTasks.includes('favicon')) { %>
 		favicon: 'src/favicon.svg',
@@ -22,7 +22,7 @@ export default const paths = {
 	}<% } %>
 };
 <% } else { %>
-export default const paths = {
+export default {
 	src:  {
 		html:     'src/**/*.html',
 		manifest: 'src/manifest.json',<% if (gulpTasks.includes('favicon')) { %>

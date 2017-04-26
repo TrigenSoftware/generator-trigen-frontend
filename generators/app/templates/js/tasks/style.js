@@ -2,6 +2,7 @@
  * Style tasks
  */
 
+import gulp          from 'gulp';
 import sassModulesImporter from 'sass-modules-importer';
 import sass          from 'gulp-sass';
 import sourcemaps    from 'gulp-sourcemaps';
@@ -46,7 +47,7 @@ gulp.task('style:dev', gulp.parallel('style:lint', () =>
 
 gulp.task('style:build', gulp.series('style:lint', () =>
 	gulp.src(paths.src.styles)
-		.pipe(sass({ importer: importer() }))
+		.pipe(sass({ importer: sassModulesImporter() }))
 		.on('error', errorReporter)
 		.pipe(autoprefixer(autoprefixerOptions))
 		.pipe(cssnano({

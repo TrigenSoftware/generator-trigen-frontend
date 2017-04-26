@@ -11,9 +11,9 @@
     "browsers": "> 1%, last 2 versions, iOS > 7, Android > 4.4, not OperaMini all"
   },
   "scripts": {
-    "dev": "gulp",
+    "start": "gulp",
     "build": "gulp build",
-    "test": "gulp html:lint && gulp style:lint"
+    "test": "gulp test"
   },
   "dependencies": {
     "bootstrap": "v4.0.0-alpha.6"

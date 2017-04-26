@@ -2,13 +2,13 @@
  * Web manifest tasks
  */
 
-import gulp       from 'gulp';
+import gulp       from 'gulp';<% if (gulpTasks.includes('favicon')) { %>
 import teleport   from 'gulp-teleport';
-import json       from 'gulp-json-editor';
+import json       from 'gulp-json-editor';<% } %>
 import notify     from './helpers/notify';
 import { server } from './server';
 import paths      from './paths';
-
+<% if (gulpTasks.includes('favicon')) { %>
 function setIcons() {
 	return json((manifest) => {
 
@@ -24,7 +24,7 @@ function setIcons() {
 		return manifest;
 	});
 }
-
+<% } %>
 gulp.task('webmanifest:watch', (done) => {
 	gulp.watch(paths.src.manifest, gulp.series('webmanifest:dev'));
 	done();
@@ -37,6 +37,7 @@ gulp.task('webmanifest:dev', () =>
 		.pipe(gulp.dest(paths.dist.root))
 		.pipe(server.stream())
 		.pipe(notify('Web manifset is updated.'))
+);
 
 gulp.task('webmanifest:build', () =>
 	gulp.src(paths.src.manifest)
@@ -50,6 +51,7 @@ gulp.task('webmanifest:dev', () =>
 		.pipe(gulp.dest(paths.dist.root))
 		.pipe(server.stream())
 		.pipe(notify('Web manifset is updated.'))
+);
 
 gulp.task('webmanifest:build', () =>
 	gulp.src(paths.src.manifest)

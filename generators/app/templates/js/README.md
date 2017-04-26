@@ -1,52 +1,33 @@
 
-# <%= name %>
+# <%= pkg.name %>
 
-<%= description %>
+<%= pkg.description %>
 
-## Gulp tasks
+## Basic commands
 
+Start development server: 
+
+```bash
+yarn start # or
+npm start  # or
+gulp dev   # or
+gulp
 ```
-├── html:watch
-├── html:lint
-├─┬ html:dev
-│ └── html:lint
-├─┬ html:build
-│ └── html:lint
-├── images:watch
-├── images:dev
-├── images:build
-├── style:watch
-├── style:lint
-├─┬ style:dev
-│ └── style:lint
-├─┬ style:build
-│ └── style:lint
-├── script:watch
-├── script:lint
-├─┬ script:dev
-│ └── script:lint
-├─┬ script:build
-│ └── script:lint
-├── server
-├─┬ watch
-│ ├── html:watch
-│ ├── images:watch
-│ ├── style:watch
-│ └── script:watch
-├─┬ dev
-│ └─┬── html:dev
-│   ├── images:dev
-│   ├── style:dev
-│   ├── script:dev
-│   ├── server
-│   └── watch
-├─┬ build
-│ └─┬── html:build
-│   ├── images:build
-│   ├── style:build
-│   └── script:build
-└─┬ default
-  └── dev
+
+Build sources for production:
+
+```bash
+yarn build    # or
+npm run build # or
+gulp build
+```
+
+Lint sources:
+
+```bash
+yarn test # or
+npm test  # or
+gulp test
 ```
 
 > This project generated with [generator-trigen-frontend](https://www.npmjs.com/package/generator-trigen-frontend)

@@ -10,7 +10,7 @@
     "node": ">=6.4.0"
   },
   "scripts": {
-    "eslint": "eslint --cache 'generators/app/*.js' 'generators/app/prompts/*.js' 'test/*/*.js'"
+    "eslint": "eslint --cache 'generators/app/*.js' 'generators/app/prompts/*.js' 'test/*/{,src/,tasks/}*.js'"
   },
   "files": [
     "generators"

@@ -6,14 +6,20 @@ const hasbin  = require('hasbin');
 const fs      = require('fs');
 const prompts = require('./prompts');
 
-const commonFiles = {
-	'editorconfig': '.editorconfig',
-	'gitignore':    '.gitignore',
-	'htmllintrc':   '.htmllintrc',
-	'stylelintrc':  '.stylelintrc',
-	'LICENSE':      'LICENSE',
-	'helpers.js':   'helpers.js'
-};
+const commonFiles = [
+	'.editorconfig',
+	'.gitignore',
+	'.htmllintrc',
+	'.stylelintrc',
+	'LICENSE'
+];
+
+const templateFiles = [
+	'src/index.html',
+	'README.md',
+	'gulpfile.babel.js',
+	'tasks/**/*'
+];
 
 module.exports =
 class GeneratorTrigenFrontend extends Generator {
@@ -154,6 +160,51 @@ class GeneratorTrigenFrontend extends Generator {
 		this._editWebmanifest();
 	}
 
+	_getFiles() {
+
+		const { props } = this,
+			{ pkg: pkgProps } = props;
+
+		const projectDir = props.projectType,
+			root = [
+				`!${this.templatePath(`${projectDir}/package.json`)}`
+			],
+			src = [
+				this.templatePath(`${projectDir}/src/**/*`)
+			],
+			templates = templateFiles.map(_ =>
+				this.templatePath(`${projectDir}/${_}`)
+			);
+
+		let skipSrc = false;
+
+		commonFiles.reverse().forEach((file) => {
+
+			if (file == 'LICENSE' && (!pkgProps || pkgProps.license != 'MIT')) {
+				return;
+			}
+
+			root.unshift(this.templatePath(file));
+		});
+
+		templates.forEach((template) => {
+			root.push(`!${template}`);
+			src.push(`!${template}`);
+		});
+
+		if (fs.existsSync(this.destinationPath('src'))) {
+			skipSrc = true;
+			src.push(`!${this.templatePath(`${projectDir}/src/**/*`)}`);
+			templates.push(`!${this.templatePath(`${projectDir}/src/**/*`)}`);
+		}
+
+		if (!props.gulpTasks.includes('favicon')) {
+			src.push(`!${this.templatePath(`${projectDir}/src/favicon.svg`)}`);
+		}
+
+		return { root, skipSrc, src, templates };
+	}
+
 	writing() {
 
 		const { pkg, webman, props } = this,
@@ -175,51 +226,15 @@ class GeneratorTrigenFrontend extends Generator {
 			);
 		}
 
-		Object.keys(commonFiles).forEach((_from) => {
+		const { root, skipSrc, src, templates } = this._getFiles();
 
-			const from = this.templatePath(_from),
-				to = this.destinationPath(commonFiles[_from]);
+		this.fs.copy(root, this.destinationRoot());
 
-			if (_from == 'LICENSE' && (!pkgProps || pkgProps.license != 'MIT')) {
-				return;
-			}
-
-			this.fs.copy(from, to);
-		});
-
-		const projectFiles = [],
-			projectDir = props.projectType,
-			readmeFile = this.templatePath(`${projectDir}/README.md`),
-			gulpFile   = this.templatePath(`${projectDir}/gulpfile.js`),
-			indexHtml  = this.templatePath(`${projectDir}/src/index.html`);
-
-		if (projectDir != 'simple') {
-			projectFiles.push(this.templatePath(`${projectDir}/.eslintrc.js`));
+		if (!skipSrc) {
+			this.fs.copy(src, this.destinationPath('src'));
 		}
 
-		projectFiles.push(
-			this.templatePath(`${projectDir}/*`),
-			`!${this.templatePath(`${projectDir}/package.json`)}`,
-			`!${readmeFile}`,
-			`!${gulpFile}`
-		);
-
-		if (!fs.existsSync(this.destinationPath('src'))) {
-			projectFiles.push(this.templatePath(`${projectDir}/src/**/*`));
-			projectFiles.push(this.templatePath(`!${indexHtml}`));
-		}
-
-		if (!props.gulpTasks.includes('favicon')) {
-			projectFiles.push(`!${this.templatePath(`${projectDir}/src/favicon.svg`)}`);
-		}
-
-		if (pkgProps) {
-			this.fs.copyTpl(readmeFile, this.destinationPath('README.md'), pkgProps);
-		}
-
-		this.fs.copyTpl(gulpFile, this.destinationPath('gulpfile.js'), props);
-		this.fs.copyTpl(indexHtml, this.destinationPath('src/index.html'), props);
-		this.fs.copy(projectFiles, this.destinationRoot());
+		this.fs.copyTpl(templates, this.destinationRoot(), props);
 	}
 
 	install() {

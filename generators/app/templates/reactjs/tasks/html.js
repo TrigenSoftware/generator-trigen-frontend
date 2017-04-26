@@ -2,9 +2,9 @@
  * HTML tasks
  */
 
-import gulp           from 'gulp';
+import gulp           from 'gulp';<% if (gulpTasks.includes('favicon')) { %>
 import teleport       from 'gulp-teleport';
-import replace        from 'gulp-replace';
+import replace        from 'gulp-replace';<% } %>
 import progressiveCss from 'gulp-progressive-css';
 import htmlmin        from 'gulp-htmlmin';
 import htmlLint       from 'gulp-html-linter';
@@ -36,7 +36,6 @@ function replaceFavicon() {
 	);
 }
 <% } %>
-
 gulp.task('html:watch', (done) => {
 	gulp.watch(paths.src.html, gulp.series('html:dev'));
 	done();
