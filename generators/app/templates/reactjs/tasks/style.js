@@ -15,8 +15,13 @@ import styleLint     from 'gulp-stylelint';
 import errorReporter from './helpers/error-reporter';
 import notify        from './helpers/notify';
 import { server }    from './server';
+import revManifests  from './rev-manifests';
 import paths         from './paths';
 import pkg           from '../package.json';
+
+revManifests.push(
+	'style-rev-manifest'
+);
 
 const autoprefixerOptions = {
 	browsers: pkg.engines.browsers
@@ -44,21 +49,21 @@ gulp.task('style:dev', gulp.parallel('style:lint', () =>
 			.pipe(autoprefixer(autoprefixerOptions))
 		.pipe(sourcemaps.write())
 		.pipe(gulp.dest(paths.dist.root))
-		.pipe(server.stream())
 		.pipe(notify('Styles are updated.'))
+		.pipe(server.stream())
 ));
 
 gulp.task('style:build', gulp.series('style:lint', () =>
 	gulp.src(paths.src.styles)
 		.pipe(sass({ importer: sassModulesImporter() }))
 		.on('error', errorReporter)
-		.pipe(revReplace({
-			manifest: teleport.stream('images-rev-manifest')
-		}))
 		.pipe(autoprefixer(autoprefixerOptions))
 		.pipe(cssnano({
 			reduceIdents: false,
 			zindex:       false
+		}))
+		.pipe(revReplace({
+			manifest: teleport.waitStream('images-rev-manifest')
 		}))
 		.pipe(rev())
 		.pipe(gulp.dest(paths.dist.root))

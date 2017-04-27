@@ -4,9 +4,8 @@
 
 import gulp           from 'gulp';
 import teleport       from 'gulp-teleport';
-import rev            from 'gulp-rev';
-import revReplace     from 'gulp-rev-replace';<% if (gulpTasks.includes('favicon')) { %>
-import replace        from 'gulp-replace';<% } %>
+import revReplace     from 'gulp-rev-replace';
+import replace        from 'gulp-replace';
 import merge          from 'gulp-merge-json';
 import progressiveCss from 'gulp-progressive-css';
 import htmlmin        from 'gulp-htmlmin';
@@ -14,6 +13,7 @@ import htmlLint       from 'gulp-html-linter';
 import notify         from './helpers/notify';
 import errorReporter  from './helpers/error-reporter';
 import { server }     from './server';
+import revManifests   from './rev-manifests';
 import paths          from './paths';
 
 const htmlminOptions = {
@@ -68,8 +68,8 @@ gulp.task('html:dev', gulp.parallel('html:lint', () =>
 		.pipe(teleport.wait('favicons'))
 		.pipe(replaceFavicon())<% } %>
 		.pipe(gulp.dest(paths.dist.root))
-		.pipe(server.stream())
 		.pipe(notify('HTML files are updated.'))
+		.pipe(server.stream())
 ));
 
 gulp.task('html:build', gulp.series('html:lint', () =>
@@ -77,15 +77,16 @@ gulp.task('html:build', gulp.series('html:lint', () =>
 		.pipe(replace('main.js', 'loader.js'))<% if (gulpTasks.includes('favicon')) { %>
 		.pipe(teleport.wait('favicons'))
 		.pipe(replaceFavicon())<% } %>
-		.pipe(revReplace({
-			manifest: teleport.stream('*-rev-manifest')
-				.pipe(merge({ fileName: 'rev-manifest.json' }))
-				.pipe(teleport.clone('rev-manifest'))
-		}))
 		.pipe(progressiveCss({ base: paths.dist.root }))
+		.pipe(teleport.wait('webpack-manifest'))
 		.pipe(injectWebpackManifest())
 		.pipe(htmlmin(htmlminOptions))
 		.on('error', errorReporter)
+		.pipe(revReplace({
+			manifest: teleport.waitStream(revManifests)
+				.pipe(merge({ fileName: 'rev-manifest.json' }))
+				.pipe(teleport.clone('rev-manifest'))
+		}))
 		.pipe(teleport.from('rev-manifest'))
 		.pipe(gulp.dest(paths.dist.root))
 		.pipe(notify('HTML files are compiled.'))

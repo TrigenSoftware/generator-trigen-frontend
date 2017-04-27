@@ -2,15 +2,20 @@
  * Favicon tasks
  */
 
-import gulp       from 'gulp';
-import teleport   from 'gulp-teleport';
-import rev        from 'gulp-rev';
-import favicons   from 'gulp-favicons';
-import srcset     from 'gulp-srcset';
-import notify     from './helpers/notify';
-import { server } from './server';
-import paths      from './paths';<% if (gulpTasks.includes('webmanifest')) { %>
-import manifest   from '../src/manifest.json';<% } %>
+import gulp         from 'gulp';
+import teleport     from 'gulp-teleport';
+import rev          from 'gulp-rev';
+import favicons     from 'gulp-favicons';
+import srcset       from 'gulp-srcset';
+import notify       from './helpers/notify';
+import { server }   from './server';
+import revManifests from './rev-manifests';
+import paths        from './paths';<% if (gulpTasks.includes('webmanifest')) { %>
+import manifest     from '../src/manifest.json';<% } %>
+
+revManifests.push(
+	'favicons-rev-manifest'
+);
 
 const faviconsOptions = <% if (faviconBackground || gulpTasks.includes('webmanifest')) { %>{
 	background: <% if (gulpTasks.includes('webmanifest')) {
@@ -74,8 +79,8 @@ gulp.task('favicon:dev', () =>
 		.pipe(teleport.to('favicons', '**/*.html'))
 		.pipe(srcset([{ match: '**/*.{png,svg}' }]))
 		.pipe(gulp.dest(paths.dist.favicons))
-		.pipe(server.stream())
 		.pipe(notify('Favicons are updated.'))
+		.pipe(server.stream())
 );
 
 gulp.task('favicon:build', () =>

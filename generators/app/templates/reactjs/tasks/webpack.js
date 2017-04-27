@@ -13,8 +13,13 @@ import WebpackHotMiddleware from 'webpack-hot-middleware';
 import notify               from './helpers/notify';
 import errorReporter        from './helpers/error-reporter';
 import { browserSyncOptions, server } from './server';
+import revManifests         from './rev-manifests';
 import paths                from './paths';
 import webpackConfig        from '../webpack.config';
+
+revManifests.push(
+	'script-rev-manifest'
+);
 
 const webpackDevCompiler = webpack(webpackConfig.dev(
 	paths.src.scripts[0],

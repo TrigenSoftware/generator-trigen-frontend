@@ -11,8 +11,13 @@ import webpack       from 'webpack';
 import notify        from './helpers/notify';
 import errorReporter from './helpers/error-reporter';
 import { server }    from './server';
+import revManifests  from './rev-manifests';
 import paths         from './paths';
 import webpackConfig from '../webpack.config';
+
+revManifests.push(
+	'script-rev-manifest'
+);
 
 const webpackDevCompiler = webpack(webpackConfig.dev(
 	paths.src.scripts[0],
@@ -57,8 +62,8 @@ gulp.task('script:dev', gulp.parallel('script:lint', done =>
 		if (stats.hasErrors()) {
 			notify.onError(new Error('Webpack compilation is failed.'));
 		} else {
-			server.reload();
 			notify('Scripts are updated.', true);
+			server.reload();
 		}
 
 		gutil.log(`${gutil.colors.cyan('webpack')}:`, `\n${stats.toString({

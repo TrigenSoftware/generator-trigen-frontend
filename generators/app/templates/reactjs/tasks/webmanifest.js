@@ -2,14 +2,19 @@
  * Web manifest tasks
  */
 
-import gulp       from 'gulp';
-import teleport   from 'gulp-teleport';
-import rev        from 'gulp-rev';
-import revReplace from 'gulp-rev-replace';<% if (gulpTasks.includes('favicon')) { %>
-import json       from 'gulp-json-editor';<% } %>
-import notify     from './helpers/notify';
-import { server } from './server';
-import paths      from './paths';
+import gulp         from 'gulp';
+import teleport     from 'gulp-teleport';
+import rev          from 'gulp-rev';
+import revReplace   from 'gulp-rev-replace';<% if (gulpTasks.includes('favicon')) { %>
+import json         from 'gulp-json-editor';<% } %>
+import notify       from './helpers/notify';
+import { server }   from './server';
+import revManifests from './rev-manifests';
+import paths        from './paths';
+
+revManifests.push(
+	'webmanifest-rev-manifest'
+);
 <% if (gulpTasks.includes('favicon')) { %>
 function setIcons() {
 	return json((manifest) => {
@@ -34,19 +39,19 @@ gulp.task('webmanifest:watch', (done) => {
 <% if (gulpTasks.includes('favicon')) { %>
 gulp.task('webmanifest:dev', () =>
 	gulp.src(paths.src.manifest)
-		.pipe(teleport.wait('favicon'))
+		.pipe(teleport.wait('webmanifest'))
 		.pipe(setIcons())
 		.pipe(gulp.dest(paths.dist.root))
-		.pipe(server.stream())
 		.pipe(notify('Web manifset is updated.'))
+		.pipe(server.stream())
 );
 
 gulp.task('webmanifest:build', () =>
 	gulp.src(paths.src.manifest)
-		.pipe(teleport.wait('favicon'))
+		.pipe(teleport.wait('webmanifest'))
 		.pipe(setIcons())
 		.pipe(revReplace({
-			manifest:            teleport.stream('favicons-rev-manifest'),
+			manifest:            teleport.waitStream('favicons-rev-manifest'),
 			replaceInExtensions: ['.json']
 		}))
 		.pipe(rev())
@@ -58,14 +63,14 @@ gulp.task('webmanifest:build', () =>
 gulp.task('webmanifest:dev', () =>
 	gulp.src(paths.src.manifest)
 		.pipe(gulp.dest(paths.dist.root))
-		.pipe(server.stream())
 		.pipe(notify('Web manifset is updated.'))
+		.pipe(server.stream())
 );
 
 gulp.task('webmanifest:build', () =>
 	gulp.src(paths.src.manifest)
 		.pipe(revReplace({
-			manifest:            teleport.stream('favicons-rev-manifest'),
+			manifest:            teleport.waitStream('favicons-rev-manifest'),
 			replaceInExtensions: ['.json']
 		}))
 		.pipe(rev())
