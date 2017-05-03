@@ -42,7 +42,7 @@ function configure(entry, dest, _publicPath) {
 	let publicPath = _publicPath;
 
 	if (typeof publicPath != 'string') {
-		publicPath = path.join(path.basename(dest), '/');
+		publicPath = path.join('/', path.basename(dest), '/');
 	}
 
 	return {

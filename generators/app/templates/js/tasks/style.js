@@ -3,7 +3,7 @@
  */
 
 import gulp          from 'gulp';
-import teleport      from 'gulp-teleport';
+import * as teleport from 'gulp-teleport';
 import rev           from 'gulp-rev';
 import revReplace    from 'gulp-rev-replace';
 import sassModulesImporter from 'sass-modules-importer';

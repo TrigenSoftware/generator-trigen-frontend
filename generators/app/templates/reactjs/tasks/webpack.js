@@ -4,7 +4,7 @@
 
 import gulp                 from 'gulp';
 import gutil                from 'gulp-util';
-import teleport             from 'gulp-teleport';
+import * as teleport        from 'gulp-teleport';
 import TeleportFs           from 'gulp-teleport/lib/fs';
 import esLint               from 'gulp-eslint';
 import webpack              from 'webpack';
@@ -38,25 +38,10 @@ webpackBuildCompiler.outputFileSystem = new TeleportFs((stream) => {
 
 	stream('**/webpack-manifest.json')
 		.pipe(teleport.to('webpack-manifest'));
-});
 
-const webpackDevMiddleware = WebpackDevMiddleware(webpackDevCompiler, {
-	publicPath:  webpackDevCompiler.options.output.publicPath,
-	stats:       {
-		chunks: false,
-		colors: true
-	}
+	stream('**/loader-*.js')
+		.pipe(teleport.to('webpack-loader'));
 });
-
-const webpackHotMiddleware = WebpackHotMiddleware(webpackDevCompiler, {
-	reload: true
-});
-
-const browserSyncWebpackOptions = {
-	...browserSyncOptions,
-	files:      ['**/*.!js'],
-	middleware: [webpackDevMiddleware, webpackHotMiddleware]
-};
 
 gulp.task('script:watch', (done) => {
 	gulp.watch(paths.src.scripts, gulp.series('script:lint'))
@@ -75,6 +60,26 @@ gulp.task('script:lint', () =>
 );
 
 gulp.task('webpack:dev', (done) => {
+
+	const webpackDevMiddleware = WebpackDevMiddleware(webpackDevCompiler, {
+		publicPath:  webpackDevCompiler.options.output.publicPath,
+		stats:       {
+			chunks: false,
+			colors: true
+		}
+	});
+
+	const webpackHotMiddleware = WebpackHotMiddleware(webpackDevCompiler, {
+		reload: true
+	});
+
+	const browserSyncWebpackOptions = {
+		...browserSyncOptions,
+		httpModule: global.undefined,
+		files:      ['**/*.!js'],
+		middleware: [webpackDevMiddleware, webpackHotMiddleware]
+	};
+
 	server.init(browserSyncWebpackOptions);
 	done();
 });

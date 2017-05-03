@@ -2,14 +2,14 @@
  * Images tasks
  */
 
-import gulp         from 'gulp';
-import teleport     from 'gulp-teleport';
-import rev          from 'gulp-rev';
-import srcset       from 'gulp-srcset';
-import notify       from './helpers/notify';
-import { server }   from './server';
-import revManifests from './rev-manifests';
-import paths        from './paths';
+import gulp          from 'gulp';
+import * as teleport from 'gulp-teleport';
+import rev           from 'gulp-rev';
+import srcset        from 'gulp-srcset';
+import notify        from './helpers/notify';
+import { server }    from './server';
+import revManifests  from './rev-manifests';
+import paths         from './paths';
 
 revManifests.push(
 	'images-rev-manifest'
@@ -28,10 +28,12 @@ gulp.task('images:dev', () =>
 			match:  '**/*.png'
 		}, {
 			match:  '**/*.svg'
-		}]))
+		}], {
+			skipOptimization: true
+		}))
 		.pipe(gulp.dest(paths.dist.root))
 		.pipe(notify('Images are updated.'))
-		.pipe(server.stream())
+		.pipe(server.stream({ once: true }))
 );
 
 gulp.task('images:build', () =>

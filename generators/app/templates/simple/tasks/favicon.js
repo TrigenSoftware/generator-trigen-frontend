@@ -2,16 +2,16 @@
  * Favicon tasks
  */
 
-import gulp         from 'gulp';
-import teleport     from 'gulp-teleport';
-import rev          from 'gulp-rev';
-import favicons     from 'gulp-favicons';
-import srcset       from 'gulp-srcset';
-import notify       from './helpers/notify';
-import { server }   from './server';
-import revManifests from './rev-manifests';
-import paths        from './paths';<% if (gulpTasks.includes('webmanifest')) { %>
-import manifest     from '../src/manifest.json';<% } %>
+import gulp          from 'gulp';
+import * as teleport from 'gulp-teleport';
+import rev           from 'gulp-rev';
+import favicons      from 'gulp-favicons';
+import srcset        from 'gulp-srcset';
+import notify        from './helpers/notify';
+import { server }    from './server';
+import revManifests  from './rev-manifests';
+import paths         from './paths';<% if (gulpTasks.includes('webmanifest')) { %>
+import manifest      from '../src/manifest.json';<% } %>
 
 revManifests.push(
 	'favicons-rev-manifest'
@@ -77,10 +77,14 @@ gulp.task('favicon:dev', () =>
 		%>.pipe(teleport.away('**/*.json'))<%
 		} %>
 		.pipe(teleport.to('favicons', '**/*.html'))
-		.pipe(srcset([{ match: '**/*.{png,svg}' }]))
+		.pipe(srcset([{
+			match: '**/*.{png,svg}'
+		}], {
+			skipOptimization: true
+		}))
 		.pipe(gulp.dest(paths.dist.favicons))
 		.pipe(notify('Favicons are updated.'))
-		.pipe(server.stream())
+		.pipe(server.stream({ once: true }))
 );
 
 gulp.task('favicon:build', () =>

@@ -7,9 +7,9 @@ import del   from 'del';
 import path  from 'path';
 import paths from './tasks/paths';
 import './tasks/server';
-import './tasks/html';
-import './tasks/favicon';
-import './tasks/webmanifest';
+import './tasks/html';<% if (gulpTasks.includes('favicon')) { %>
+import './tasks/favicon';<% } %><% if (gulpTasks.includes('webmanifest')) { %>
+import './tasks/webmanifest';<% } %>
 import './tasks/images';
 import './tasks/style';
 

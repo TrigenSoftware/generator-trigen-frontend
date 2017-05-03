@@ -4,7 +4,7 @@
 
 import gulp          from 'gulp';
 import gutil         from 'gulp-util';
-import teleport      from 'gulp-teleport';
+import * as teleport from 'gulp-teleport';
 import TeleportFs    from 'gulp-teleport/lib/fs';
 import esLint        from 'gulp-eslint';
 import webpack       from 'webpack';
@@ -36,6 +36,9 @@ webpackBuildCompiler.outputFileSystem = new TeleportFs((stream) => {
 
 	stream('**/webpack-manifest.json')
 		.pipe(teleport.to('webpack-manifest'));
+
+	stream('**/loader-*.js')
+		.pipe(teleport.to('webpack-loader'));
 });
 
 gulp.task('script:watch', (done) => {

@@ -18,6 +18,7 @@ const templateFiles = [
 	'src/index.html',
 	'README.md',
 	'gulpfile.babel.js',
+	'webpack.config.js',
 	'tasks/**/*'
 ];
 
@@ -27,6 +28,12 @@ class GeneratorTrigenFrontend extends Generator {
 	constructor(args, opts) {
 
 		super(args, opts);
+
+		this.option('silent', {
+			description: 'Run generator without prompts, using defaults from .yo-rc.json.',
+			alias:       'S',
+			default:     false
+		});
 
 		this.props = {};
 		this.pkg = false;
@@ -59,8 +66,9 @@ class GeneratorTrigenFrontend extends Generator {
 
 		this.log(yosay(`Welcome to the delightful ${chalk.green('trigen-frontend')} generator!`));
 
-		const pkgOrNot  = this._package(),
-			webmanOrNot = this._webmanifest();
+		const { silent } = this.options,
+			pkgOrNot     = this._package(),
+			webmanOrNot  = this._webmanifest();
 
 		if (pkgOrNot) {
 			this.pkg = pkgOrNot;
@@ -68,6 +76,20 @@ class GeneratorTrigenFrontend extends Generator {
 
 		if (webmanOrNot) {
 			this.webman = webmanOrNot;
+		}
+
+		if (silent) {
+			
+			const props = this.config.getAll();
+
+			if (!Object.keys(props).length) {
+				this.log(chalk.red('`.yo-rc.json` file not found.'));
+				process.exit(1);
+			}
+
+			this.props = props;
+
+			return true;
 		}
 
 		return prompts(this, this.pkg, this.webman).then((props) => {
@@ -200,6 +222,11 @@ class GeneratorTrigenFrontend extends Generator {
 
 		if (!props.gulpTasks.includes('favicon')) {
 			src.push(`!${this.templatePath(`${projectDir}/src/favicon.svg`)}`);
+			templates.push(`!${this.templatePath(`${projectDir}/tasks/favicon.js`)}`);
+		}
+
+		if (!props.gulpTasks.includes('webmanifest')) {
+			templates.push(`!${this.templatePath(`${projectDir}/tasks/webmanifest.js`)}`);
 		}
 
 		return { root, skipSrc, src, templates };
@@ -233,6 +260,8 @@ class GeneratorTrigenFrontend extends Generator {
 		if (!skipSrc) {
 			this.fs.copy(src, this.destinationPath('src'));
 		}
+
+		console.log(props.gulpTasks.includes('webmanifest'));
 
 		this.fs.copyTpl(templates, this.destinationRoot(), props);
 	}

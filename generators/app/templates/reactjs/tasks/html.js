@@ -3,7 +3,7 @@
  */
 
 import gulp           from 'gulp';
-import teleport       from 'gulp-teleport';
+import * as teleport  from 'gulp-teleport';
 import revReplace     from 'gulp-rev-replace';
 import replace        from 'gulp-replace';
 import merge          from 'gulp-merge-json';
@@ -39,14 +39,17 @@ function replaceFavicon() {
 	);
 }
 <% } %>
-function injectWebpackManifest() {
+function injectWebpackLoader() {
 	return replace(
-		'</head>',
+		'<script',
 		() => `<script>window.webpackManifest=${
-			teleport.get('webpack-manifest')
+			[
+				...teleport.get('webpack-manifest'),
+				...teleport.get('webpack-loader')
+			]
 				.map(_ => _.contents.toString('utf8'))
-				.shift()
-		}</script></head>`
+				.join(';')
+		}</script><script`
 	);
 }
 
@@ -69,7 +72,7 @@ gulp.task('html:dev', gulp.parallel('html:lint', () =>
 		.pipe(replaceFavicon())<% } %>
 		.pipe(gulp.dest(paths.dist.root))
 		.pipe(notify('HTML files are updated.'))
-		.pipe(server.stream())
+		.pipe(server.stream({ once: true }))
 ));
 
 gulp.task('html:build', gulp.series('html:lint', () =>
@@ -77,16 +80,16 @@ gulp.task('html:build', gulp.series('html:lint', () =>
 		.pipe(replace('main.js', 'loader.js'))<% if (gulpTasks.includes('favicon')) { %>
 		.pipe(teleport.wait('favicons'))
 		.pipe(replaceFavicon())<% } %>
-		.pipe(progressiveCss({ base: paths.dist.root }))
-		.pipe(teleport.wait('webpack-manifest'))
-		.pipe(injectWebpackManifest())
-		.pipe(htmlmin(htmlminOptions))
-		.on('error', errorReporter)
 		.pipe(revReplace({
 			manifest: teleport.waitStream(revManifests)
 				.pipe(merge({ fileName: 'rev-manifest.json' }))
 				.pipe(teleport.clone('rev-manifest'))
 		}))
+		.pipe(progressiveCss({ base: paths.dist.root }))
+		.pipe(teleport.wait(['webpack-manifest', 'webpack-loader']))
+		.pipe(injectWebpackLoader())
+		.pipe(htmlmin(htmlminOptions))
+		.on('error', errorReporter)
 		.pipe(teleport.from('rev-manifest'))
 		.pipe(gulp.dest(paths.dist.root))
 		.pipe(notify('HTML files are compiled.'))
