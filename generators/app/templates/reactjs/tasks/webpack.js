@@ -23,12 +23,12 @@ revManifests.push(
 
 const webpackDevCompiler = webpack(webpackConfig.dev(
 	paths.src.scripts[0],
-	paths.dist.app
+	paths.dev.app
 ));
 
 const webpackBuildCompiler = webpack(webpackConfig.build(
 	paths.src.scripts[0],
-	paths.dist.app
+	paths.build.app
 ));
 
 webpackBuildCompiler.outputFileSystem = new TeleportFs((stream) => {
@@ -73,14 +73,15 @@ gulp.task('webpack:dev', (done) => {
 		reload: true
 	});
 
-	const browserSyncWebpackOptions = {
+	const browserSyncWebpackOptionsDev = {
 		...browserSyncOptions,
+		server:     paths.dev.root,
 		httpModule: global.undefined,
 		files:      ['**/*.!js'],
 		middleware: [webpackDevMiddleware, webpackHotMiddleware]
 	};
 
-	server.init(browserSyncWebpackOptions);
+	server.init(browserSyncWebpackOptionsDev);
 	done();
 });
 

@@ -6,6 +6,7 @@ import gulp          from 'gulp';
 import * as teleport from 'gulp-teleport';
 import rev           from 'gulp-rev';
 import revReplace    from 'gulp-rev-replace';
+import size          from 'gulp-size';
 import sassModulesImporter from 'sass-modules-importer';
 import sass          from 'gulp-sass';
 import sourcemaps    from 'gulp-sourcemaps';
@@ -48,7 +49,7 @@ gulp.task('style:dev', gulp.parallel('style:lint', () =>
 			.on('error', errorReporter)
 			.pipe(autoprefixer(autoprefixerOptions))
 		.pipe(sourcemaps.write())
-		.pipe(gulp.dest(paths.dist.root))
+		.pipe(gulp.dest(paths.dev.root))
 		.pipe(notify('Styles are updated.'))
 		.pipe(server.stream())
 ));
@@ -57,6 +58,7 @@ gulp.task('style:build', gulp.series('style:lint', () =>
 	gulp.src(paths.src.styles)
 		.pipe(sass({ importer: sassModulesImporter() }))
 		.on('error', errorReporter)
+		.pipe(size({ title: 'styles' }))
 		.pipe(autoprefixer(autoprefixerOptions))
 		.pipe(cssnano({
 			reduceIdents: false,
@@ -66,7 +68,8 @@ gulp.task('style:build', gulp.series('style:lint', () =>
 			manifest: teleport.waitStream('images-rev-manifest')
 		}))
 		.pipe(rev())
-		.pipe(gulp.dest(paths.dist.root))
+		.pipe(size({ title: 'styles optimized' }))
+		.pipe(gulp.dest(paths.build.root))
 		.pipe(rev.manifest())
 		.pipe(notify('Styles are compiled.'))
 		.pipe(teleport.to('style-rev-manifest'))

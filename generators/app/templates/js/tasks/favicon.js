@@ -5,6 +5,9 @@
 import gulp          from 'gulp';
 import * as teleport from 'gulp-teleport';
 import rev           from 'gulp-rev';
+import newer         from 'gulp-newer';
+import cache         from 'gulp-cache';
+import size          from 'gulp-size';
 import favicons      from 'gulp-favicons';
 import srcset        from 'gulp-srcset';
 import notify        from './helpers/notify';
@@ -70,6 +73,7 @@ gulp.task('favicon:watch', (done) => {
 
 gulp.task('favicon:dev', () =>
 	gulp.src(paths.src.favicon)
+		.pipe(newer(paths.dev.favicons))
 		.pipe(favicons(faviconsOptions))
 		<% if (gulpTasks.includes('webmanifest')) {
 		%>.pipe(teleport.to('webmanifest', '**/*.json'))<%
@@ -82,23 +86,25 @@ gulp.task('favicon:dev', () =>
 		}], {
 			skipOptimization: true
 		}))
-		.pipe(gulp.dest(paths.dist.favicons))
+		.pipe(gulp.dest(paths.dev.favicons))
 		.pipe(notify('Favicons are updated.'))
 		.pipe(server.stream({ once: true }))
 );
 
 gulp.task('favicon:build', () =>
 	gulp.src(paths.src.favicon)
-		.pipe(favicons(faviconsOptions))
+		.pipe(cache(favicons(faviconsOptions)))
 		<% if (gulpTasks.includes('webmanifest')) {
 		%>.pipe(teleport.to('webmanifest', '**/*.json'))<%
 		} else {
 		%>.pipe(teleport.away('**/*.json'))<%
 		} %>
 		.pipe(teleport.to('favicons', '**/*.html'))
-		.pipe(srcset([{ match: '**/*.{png,svg}' }]))
+		.pipe(size({ title: 'favicons' }))
+		.pipe(cache(srcset([{ match: '**/*.{png,svg}' }])))
 		.pipe(rev())
-		.pipe(gulp.dest(paths.dist.favicons))
+		.pipe(size({ title: 'favicons optimized' }))
+		.pipe(gulp.dest(paths.build.favicons))
 		.pipe(rev.manifest())
 		.pipe(notify('Favicons are generated.'))
 		.pipe(teleport.to('favicons-rev-manifest'))

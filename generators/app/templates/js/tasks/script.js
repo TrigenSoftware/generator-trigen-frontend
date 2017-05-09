@@ -21,12 +21,12 @@ revManifests.push(
 
 const webpackDevCompiler = webpack(webpackConfig.dev(
 	paths.src.scripts[0],
-	paths.dist.app
+	paths.dev.app
 ));
 
 const webpackBuildCompiler = webpack(webpackConfig.build(
 	paths.src.scripts[0],
-	paths.dist.app
+	paths.build.app
 ));
 
 webpackBuildCompiler.outputFileSystem = new TeleportFs((stream) => {

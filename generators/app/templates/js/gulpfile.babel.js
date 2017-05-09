@@ -7,6 +7,7 @@ import del   from 'del';
 import path  from 'path';
 import paths from './tasks/paths';
 import './tasks/server';
+import './tasks/copy';
 import './tasks/html';<% if (gulpTasks.includes('favicon')) { %>
 import './tasks/favicon';<% } %><% if (gulpTasks.includes('webmanifest')) { %>
 import './tasks/webmanifest';<% } %>
@@ -14,14 +15,9 @@ import './tasks/images';
 import './tasks/style';
 import './tasks/script';
 
-gulp.task('copy', () =>
-	gulp.src(paths.src.copy)
-		.pipe(gulp.dest(paths.dist.root))
-);
-
 gulp.task('clear', () =>
 	del([
-		path.join(paths.dist.root, '**/*')
+		path.join(paths.build.root, '**/*')
 	])
 );
 
@@ -35,9 +31,9 @@ gulp.task('watch', gulp.parallel(
 ));
 
 gulp.task('dev', gulp.series(
-	'server',
+	'server:dev',
 	gulp.parallel(
-		'copy',
+		'copy:dev',
 		gulp.series(
 			'style:dev',
 			'html:dev'
@@ -53,7 +49,7 @@ gulp.task('dev', gulp.series(
 gulp.task('build', gulp.series(
 	'clear',
 	gulp.parallel(
-		'copy',
+		'copy:build',
 		gulp.series(
 			'style:build',
 			'html:build'

@@ -22,13 +22,21 @@ export default {
 			'!src/manifest.json'
 		]
 	},
-	dist: <% if (gulpTasks.includes('favicon')) { %>{
-		root:     'dist',
-		favicons: 'dist/favicons',
-		app:      'dist/app'
+	dev: <% if (gulpTasks.includes('favicon')) { %>{
+		root:     '.tmp',
+		favicons: '.tmp/favicons',
+		app:      '.tmp/app'
 	}<% } else { %>{
-		root: 'dist',
-		app:  'dist/app'
+		root: '.tmp',
+		app:  '.tmp/app'
+	}<% } %>,
+	build: <% if (gulpTasks.includes('favicon')) { %>{
+		root:     'build',
+		favicons: 'build/favicons',
+		app:      'build/app'
+	}<% } else { %>{
+		root: 'build',
+		app:  'build/app'
 	}<% } %>
 };
 <% } else { %>
@@ -48,13 +56,21 @@ export default {
 		],
 		copy:    'src/**/*.!(html|jpg|webp|png|svg|gif|scss|js)'
 	},
-	dist: <% if (gulpTasks.includes('favicon')) { %>{
-		root:     'dist',
-		favicons: 'dist/favicons',
-		app:      'dist/app'
+	dev: <% if (gulpTasks.includes('favicon')) { %>{
+		root:     '.tmp',
+		favicons: '.tmp/favicons',
+		app:      '.tmp/app'
 	}<% } else { %>{
-		root: 'dist',
-		app:  'dist/app'
+		root: '.tmp',
+		app:  '.tmp/app'
+	}<% } %>,
+	build: <% if (gulpTasks.includes('favicon')) { %>{
+		root:     'build',
+		favicons: 'build/favicons',
+		app:      'build/app'
+	}<% } else { %>{
+		root: 'build',
+		app:  'build/app'
 	}<% } %>
 };
 <% } %>

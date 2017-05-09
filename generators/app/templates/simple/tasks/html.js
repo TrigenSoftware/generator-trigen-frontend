@@ -5,6 +5,8 @@
 import gulp           from 'gulp';
 import * as teleport  from 'gulp-teleport';
 import revReplace     from 'gulp-rev-replace';
+import newer          from 'gulp-newer';
+import size           from 'gulp-size';
 import replace        from 'gulp-replace';
 import merge          from 'gulp-merge-json';
 import progressiveCss from 'gulp-progressive-css';
@@ -53,10 +55,11 @@ gulp.task('html:lint', () =>
 );
 
 gulp.task('html:dev', gulp.parallel('html:lint', () =>
-	gulp.src(paths.src.html)<% if (gulpTasks.includes('favicon')) { %>
+	gulp.src(paths.src.html)
+		.pipe(newer(paths.dev.root))<% if (gulpTasks.includes('favicon')) { %>
 		.pipe(teleport.wait('favicons'))
 		.pipe(replaceFavicon())<% } %>
-		.pipe(gulp.dest(paths.dist.root))
+		.pipe(gulp.dest(paths.dev.root))
 		.pipe(notify('HTML files are updated.'))
 		.pipe(server.stream({ once: true }))
 ));
@@ -71,10 +74,12 @@ gulp.task('html:build', gulp.series('html:lint', () =>
 				.pipe(merge({ fileName: 'rev-manifest.json' }))
 				.pipe(teleport.clone('rev-manifest'))
 		}))
-		.pipe(progressiveCss({ base: paths.dist.root }))
+		.pipe(progressiveCss({ base: paths.build.root }))
+		.pipe(size({ title: 'html' }))
 		.pipe(htmlmin(htmlminOptions))
 		.on('error', errorReporter)
+		.pipe(size({ title: 'html optimized' }))
 		.pipe(teleport.from('rev-manifest'))
-		.pipe(gulp.dest(paths.dist.root))
+		.pipe(gulp.dest(paths.build.root))
 		.pipe(notify('HTML files are compiled.'))
 ));
