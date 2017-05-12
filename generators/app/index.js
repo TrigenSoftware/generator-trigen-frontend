@@ -261,8 +261,6 @@ class GeneratorTrigenFrontend extends Generator {
 			this.fs.copy(src, this.destinationPath('src'));
 		}
 
-		console.log(props.gulpTasks.includes('webmanifest'));
-
 		this.fs.copyTpl(templates, this.destinationRoot(), props);
 	}
 

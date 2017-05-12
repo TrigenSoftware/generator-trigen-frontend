@@ -3,6 +3,7 @@
  */
 
 import gulp  from 'gulp';
+import cache from 'gulp-cache';
 import del   from 'del';
 import path  from 'path';
 import paths from './tasks/paths';
@@ -13,6 +14,10 @@ import './tasks/favicon';<% } %><% if (gulpTasks.includes('webmanifest')) { %>
 import './tasks/webmanifest';<% } %>
 import './tasks/images';
 import './tasks/style';
+
+gulp.task('cache:clear', (done) =>
+	cache.clearAll(done)
+);
 
 gulp.task('clear', () =>
 	del([

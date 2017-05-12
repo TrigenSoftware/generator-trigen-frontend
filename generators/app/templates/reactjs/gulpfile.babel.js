@@ -3,6 +3,7 @@
  */
 
 import gulp  from 'gulp';
+import cache from 'gulp-cache';
 import del   from 'del';
 import path  from 'path';
 import paths from './tasks/paths';
@@ -14,6 +15,10 @@ import './tasks/webmanifest';<% } %>
 import './tasks/images';
 import './tasks/style';
 import './tasks/webpack';
+
+gulp.task('cache:clear', (done) =>
+	cache.clearAll(done)
+);
 
 gulp.task('clear', () =>
 	del([

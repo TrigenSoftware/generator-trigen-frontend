@@ -27,11 +27,11 @@ gulp.task('images:dev', () =>
 	gulp.src(paths.src.images)
 		.pipe(newer(paths.dev.root))
 		.pipe(srcset([{
-			match:  '**/*.jpg'
+			match: '**/*.jpg'
 		}, {
-			match:  '**/*.png'
+			match: '**/*.png'
 		}, {
-			match:  '**/*.svg'
+			match: '**/*.svg'
 		}], {
 			skipOptimization: true
 		}))
@@ -44,11 +44,11 @@ gulp.task('images:build', () =>
 	gulp.src(paths.src.images)
 		.pipe(size({ title: 'images' }))
 		.pipe(cache(srcset([{
-			match:  '**/*.jpg'
+			match: '**/*.jpg'
 		}, {
-			match:  '**/*.png'
+			match: '**/*.png'
 		}, {
-			match:  '**/*.svg'
+			match: '**/*.svg'
 		}])))
 		.pipe(rev())
 		.pipe(size({ title: 'images optimized' }))
