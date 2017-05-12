@@ -10,6 +10,7 @@ import cache         from 'gulp-cache';
 import size          from 'gulp-size';
 import favicons      from 'gulp-favicons';
 import srcset        from 'gulp-srcset';
+import path          from 'path';
 import notify        from './helpers/notify';
 import { server }    from './server';
 import revManifests  from './rev-manifests';
@@ -73,7 +74,7 @@ gulp.task('favicon:watch', (done) => {
 
 gulp.task('favicon:dev', () =>
 	gulp.src(paths.src.favicon)
-		.pipe(newer(paths.dev.favicons))
+		// .pipe(newer(path.join(paths.dev.favicons, 'favicon.ico')))
 		.pipe(favicons(faviconsOptions))
 		<% if (gulpTasks.includes('webmanifest')) {
 		%>.pipe(teleport.to('webmanifest', '**/*.json'))<%

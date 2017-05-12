@@ -19,4 +19,5 @@ node_modules
 .eslintcache
 
 # Compiled dist
-dist
+.tmp
+build

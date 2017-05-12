@@ -4,6 +4,7 @@
 <% if (gulpTasks.includes('webmanifest')) { %>
 export default {
 	src:  {
+		root:     'src',
 		html:     'src/**/*.html',
 		manifest: 'src/manifest.json',<% if (gulpTasks.includes('favicon')) { %>
 		favicon:  'src/favicon.svg',
@@ -34,6 +35,7 @@ export default {
 <% } else { %>
 export default {
 	src:  {
+		root:    'src',
 		html:    'src/**/*.html',<% if (gulpTasks.includes('favicon')) { %>
 		favicon: 'src/favicon.svg',
 		images:  [

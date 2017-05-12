@@ -19,6 +19,7 @@ const templateFiles = [
 	'README.md',
 	'gulpfile.babel.js',
 	'webpack.config.js',
+	'.eslintrc.js',
 	'tasks/**/*'
 ];
 
@@ -124,6 +125,11 @@ class GeneratorTrigenFrontend extends Generator {
 		pkg.scripts = targetPkg.scripts;
 		pkg.babel = targetPkg.babel;
 		pkg.engines.browsers = pkg.browsers;
+
+		if (pkg.license == 'private') {
+			pkg.license = 'UNLICENSED';
+			pkg.private = true;
+		}
 
 		if (pkg.babel && pkg.browsers && Array.isArray(pkg.babel.presets)) {
 			pkg.babel.presets.some((preset) => {

@@ -75,7 +75,7 @@ function configureDev(entry, dest, publicPath) {
 	return update(configure(entry, dest, publicPath), {
 		entry:   { $unshift: [
 			'react-hot-loader/patch',
-			'webpack-hot-middleware/client?http://localhost:3000/'
+			'webpack-hot-middleware/client?http://localhost:3000/&reload=true'
 		] },
 		devtool: { $set: 'cheap-module-eval-source-map' },
 		module:  { rules: { 0: { query: { plugins: { $unshift: ['react-hot-loader/babel'] } } } } },
