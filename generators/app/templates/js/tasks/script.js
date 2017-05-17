@@ -8,6 +8,7 @@ import * as teleport from 'gulp-teleport';
 import TeleportFs    from 'gulp-teleport/lib/fs';
 import esLint        from 'gulp-eslint';
 import webpack       from 'webpack';
+import path          from 'path';
 import notify        from './helpers/notify';
 import errorReporter from './helpers/error-reporter';
 import { server }    from './server';
@@ -19,15 +20,19 @@ revManifests.push(
 	'script-rev-manifest'
 );
 
-const webpackDevCompiler = webpack(webpackConfig.dev(
-	paths.src.scripts[0],
-	paths.dev.app
-));
+const appRoot = path.dirname(paths.src.scripts[0]);
 
-const webpackBuildCompiler = webpack(webpackConfig.build(
-	paths.src.scripts[0],
-	paths.build.app
-));
+const webpackDevCompiler = webpack(webpackConfig.dev({
+	root:  appRoot,
+	entry: paths.src.scripts[0],
+	dest:  paths.dev.app
+}));
+
+const webpackBuildCompiler = webpack(webpackConfig.build({
+	root:  appRoot,
+	entry: paths.src.scripts[0],
+	dest:  paths.build.app
+}));
 
 webpackBuildCompiler.outputFileSystem = new TeleportFs((stream) => {
 

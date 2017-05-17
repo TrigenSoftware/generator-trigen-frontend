@@ -74,8 +74,7 @@ gulp.task('favicon:watch', (done) => {
 
 gulp.task('favicon:dev', () =>
 	gulp.src(paths.src.favicon)
-		// .pipe(newer(path.join(paths.dev.favicons, 'favicon.ico')))
-		.pipe(favicons(faviconsOptions))
+		.pipe(cache(favicons(faviconsOptions)))
 		<% if (gulpTasks.includes('webmanifest')) {
 		%>.pipe(teleport.to('webmanifest', '**/*.json'))<%
 		} else {

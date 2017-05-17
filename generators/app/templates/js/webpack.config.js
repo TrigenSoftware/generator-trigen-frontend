@@ -15,10 +15,15 @@ import update                     from 'immutability-helper';
 import path                       from 'path';
 import pkg                        from './package.json';
 
+const defaultRoot  = process.env.WEBPACK_ROOT  || './src/app';
 const defaultEntry = process.env.WEBPACK_ENTRY || './src/app/main.js';
-const defaultDest  = process.env.WEBPACK_OUTPUT_PATH || './dist/app';
+const defaultDest  = process.env.WEBPACK_DEST  || './dist/app';
 
-const config = configure(defaultEntry, defaultDest);
+const config = configure({
+	root:  defaultRoot,
+	entry: defaultEntry,
+	dest:  defaultDest
+});
 
 /**
  * Exports
@@ -33,7 +38,7 @@ export default config;
  * Configurators
  */
 
-function configure(entry, dest, _publicPath) {
+function configure({ root, entry, dest, publicPath: _publicPath }) {
 
 	const entries = Array.isArray(entry)
 		? entry
@@ -54,6 +59,11 @@ function configure(entry, dest, _publicPath) {
 			hashDigestLength: 10,
 			publicPath
 		},
+		resolve: {
+			alias: {
+				'~': path.join(__dirname, root)
+			}
+		},
 		module:  {
 			rules: [{
 				test:    /\.js$/,
@@ -71,8 +81,8 @@ function configure(entry, dest, _publicPath) {
 	};
 }
 
-function configureDev(entry, dest, publicPath) {
-	return update(configure(entry, dest, publicPath), {
+function configureDev(params) {
+	return update(configure(params), {
 		devtool: { $set: 'cheap-module-eval-source-map' },
 		plugins: { $push: [
 			new webpack.DefinePlugin({
@@ -86,9 +96,9 @@ function configureDev(entry, dest, publicPath) {
 	});
 }
 
-function configureBuild(entry, dest, publicPath) {
+function configureBuild(params) {
 
-	const config = configure(entry, dest, publicPath);
+	const config = configure(params);
 
 	return update(config, {
 		output:  {
