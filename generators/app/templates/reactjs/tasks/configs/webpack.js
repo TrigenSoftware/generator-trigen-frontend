@@ -2,10 +2,6 @@
  * Webpack configs.
  */
 
-/**
- * Imports
- */
-
 import webpack                    from 'webpack';
 import WebpackBabiliPlugin        from 'babili-webpack-plugin';
 import WebpackChunkHash           from 'webpack-chunk-hash';
@@ -13,30 +9,9 @@ import WebpackManifestPlugin      from 'webpack-manifest-plugin';
 import WebpackChunkManifsetPlugin from 'chunk-manifest-webpack-plugin';
 import update                     from 'immutability-helper';
 import path                       from 'path';
-import pkg                        from './package.json';
+import pkg                        from '../../package.json';
 
-const defaultRoot  = process.env.WEBPACK_ROOT  || './src/app';
-const defaultEntry = process.env.WEBPACK_ENTRY || './src/app/main.js';
-const defaultDest  = process.env.WEBPACK_DEST  || './dist/app';
-
-const config = configure({
-	root:  defaultRoot,
-	entry: defaultEntry,
-	dest:  defaultDest
-});
-
-/**
- * Exports
- */
-
-Reflect.defineProperty(config, 'dev', { value: configureDev });
-Reflect.defineProperty(config, 'build', { value: configureBuild });
-
-export default config;
-
-/**
- * Configurators
- */
+const cwd = process.cwd();
 
 function configure({ root, entry, dest, publicPath: _publicPath }) {
 
@@ -51,9 +26,9 @@ function configure({ root, entry, dest, publicPath: _publicPath }) {
 	}
 
 	return {
-		entry:   entries.map(_ => path.resolve(_)),
+		entry:   entries.map(_ => path.join(cwd, _)),
 		output:  {
-			path:             path.resolve(__dirname, dest),
+			path:             path.join(cwd, dest),
 			filename:         '[name].js',
 			chunkFilename:    '[name].js',
 			hashDigestLength: 10,
@@ -61,7 +36,7 @@ function configure({ root, entry, dest, publicPath: _publicPath }) {
 		},
 		resolve: {
 			alias: {
-				'~': path.join(__dirname, root)
+				'~': path.join(cwd, root)
 			}
 		},
 		module:  {
@@ -81,7 +56,7 @@ function configure({ root, entry, dest, publicPath: _publicPath }) {
 	};
 }
 
-function configureDev(params) {
+export function dev(params) {
 	return update(configure(params), {
 		entry:   { $unshift: [
 			'react-hot-loader/patch',
@@ -102,7 +77,7 @@ function configureDev(params) {
 	});
 }
 
-function configureBuild(params) {
+export function build(params) {
 
 	const config = configure(params);
 

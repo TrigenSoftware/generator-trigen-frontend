@@ -6,7 +6,7 @@ import gulp  from 'gulp';
 import cache from 'gulp-cache';
 import del   from 'del';
 import path  from 'path';
-import paths from './tasks/paths';
+import paths from './tasks/configs/paths';
 import './tasks/server';
 import './tasks/copy';
 import './tasks/html';<% if (gulpTasks.includes('favicon')) { %>

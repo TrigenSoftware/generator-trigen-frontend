@@ -14,22 +14,11 @@ import htmlmin        from 'gulp-htmlmin';
 import htmlLint       from 'gulp-html-linter';
 import notify         from './helpers/notify';
 import errorReporter  from './helpers/error-reporter';
+import revManifests   from './configs/rev-manifests';
+import paths          from './configs/paths';
+import htmlminConfig  from './configs/htmlmin';
 import { server }     from './server';
-import revManifests   from './rev-manifests';
-import paths          from './paths';
 
-const htmlminOptions = {
-	removeComments:                true,
-	collapseWhitespace:            true,
-	collapseBooleanAttributes:     true,
-	removeAttributeQuotes:         true,
-	removeRedundantAttributes:     true,
-	useShortDoctype:               true,
-	removeEmptyAttributes:         true,
-	removeScriptTypeAttributes:    true,
-	removeStyleLinkTypeAttributes: true,
-	minifyJS:                      true
-};
 <% if (gulpTasks.includes('favicon')) { %>
 function replaceFavicon() {
 	return replace(
@@ -92,7 +81,7 @@ gulp.task('html:build', gulp.series('html:lint', () =>
 		.pipe(teleport.wait(['webpack-manifest', 'webpack-loader']))
 		.pipe(injectWebpackLoader())
 		.pipe(size({ title: 'html' }))
-		.pipe(htmlmin(htmlminOptions))
+		.pipe(htmlmin(htmlminConfig))
 		.on('error', errorReporter)
 		.pipe(size({ title: 'html optimized' }))
 		.pipe(teleport.from('rev-manifest'))

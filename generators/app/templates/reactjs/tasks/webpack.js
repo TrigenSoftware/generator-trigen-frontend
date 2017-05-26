@@ -13,25 +13,24 @@ import WebpackHotMiddleware from 'webpack-hot-middleware';
 import path                 from 'path';
 import notify               from './helpers/notify';
 import errorReporter        from './helpers/error-reporter';
-import { browserSyncOptions, server } from './server';
-import revManifests         from './rev-manifests';
-import paths                from './paths';
-import webpackConfig        from '../webpack.config';
+import revManifests         from './configs/rev-manifests';
+import paths                from './configs/paths';
+import browserSyncConfig    from './configs/browser-sync';
+import * as webpackConfig   from './configs/webpack';
+import { server }           from './server';
 
 revManifests.push(
 	'script-rev-manifest'
 );
 
-const appRoot = path.dirname(paths.src.scripts[0]);
-
 const webpackDevCompiler = webpack(webpackConfig.dev({
-	root:  appRoot,
+	root:  paths.src.app,
 	entry: paths.src.scripts[0],
 	dest:  paths.dev.app
 }));
 
 const webpackBuildCompiler = webpack(webpackConfig.build({
-	root:  appRoot,
+	root:  paths.src.app,
 	entry: paths.src.scripts[0],
 	dest:  paths.build.app
 }));
@@ -78,15 +77,15 @@ gulp.task('webpack:dev', (done) => {
 		reload: true
 	});
 
-	const browserSyncWebpackOptionsDev = {
-		...browserSyncOptions,
+	const browserSyncWebpackConfigDev = {
+		...browserSyncConfig,
 		server:     paths.dev.root,
 		httpModule: global.undefined,
 		files:      ['**/*.!js'],
 		middleware: [webpackDevMiddleware, webpackHotMiddleware]
 	};
 
-	server.init(browserSyncWebpackOptionsDev);
+	server.init(browserSyncWebpackConfigDev);
 	done();
 });
 

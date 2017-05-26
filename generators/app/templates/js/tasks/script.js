@@ -2,34 +2,32 @@
  * JavaScript tasks
  */
 
-import gulp          from 'gulp';
-import gutil         from 'gulp-util';
-import * as teleport from 'gulp-teleport';
-import TeleportFs    from 'gulp-teleport/lib/fs';
-import esLint        from 'gulp-eslint';
-import webpack       from 'webpack';
-import path          from 'path';
-import notify        from './helpers/notify';
-import errorReporter from './helpers/error-reporter';
-import { server }    from './server';
-import revManifests  from './rev-manifests';
-import paths         from './paths';
-import webpackConfig from '../webpack.config';
+import gulp               from 'gulp';
+import gutil              from 'gulp-util';
+import * as teleport      from 'gulp-teleport';
+import TeleportFs         from 'gulp-teleport/lib/fs';
+import esLint             from 'gulp-eslint';
+import webpack            from 'webpack';
+import path               from 'path';
+import notify             from './helpers/notify';
+import errorReporter      from './helpers/error-reporter';
+import revManifests       from './configs/rev-manifests';
+import paths              from './configs/paths';
+import * as webpackConfig from './configs/webpack';
+import { server }         from './server';
 
 revManifests.push(
 	'script-rev-manifest'
 );
 
-const appRoot = path.dirname(paths.src.scripts[0]);
-
 const webpackDevCompiler = webpack(webpackConfig.dev({
-	root:  appRoot,
+	root:  paths.src.app,
 	entry: paths.src.scripts[0],
 	dest:  paths.dev.app
 }));
 
 const webpackBuildCompiler = webpack(webpackConfig.build({
-	root:  appRoot,
+	root:  paths.src.app,
 	entry: paths.src.scripts[0],
 	dest:  paths.build.app
 }));

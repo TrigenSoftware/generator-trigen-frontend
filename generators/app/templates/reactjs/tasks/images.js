@@ -10,9 +10,9 @@ import cache         from 'gulp-cache';
 import size          from 'gulp-size';
 import srcset        from 'gulp-srcset';
 import notify        from './helpers/notify';
+import revManifests  from './configs/rev-manifests';
+import paths         from './configs/paths';
 import { server }    from './server';
-import revManifests  from './rev-manifests';
-import paths         from './paths';
 
 revManifests.push(
 	'images-rev-manifest'

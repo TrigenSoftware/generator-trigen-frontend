@@ -2,31 +2,27 @@
  * Style tasks
  */
 
-import gulp          from 'gulp';
-import * as teleport from 'gulp-teleport';
-import rev           from 'gulp-rev';
-import revReplace    from 'gulp-rev-replace';
-import size          from 'gulp-size';
+import gulp                from 'gulp';
+import * as teleport       from 'gulp-teleport';
+import rev                 from 'gulp-rev';
+import revReplace          from 'gulp-rev-replace';
+import size                from 'gulp-size';
 import sassModulesImporter from 'sass-modules-importer';
-import sass          from 'gulp-sass';
-import sourcemaps    from 'gulp-sourcemaps';
-import cssnano       from 'gulp-cssnano';
-import autoprefixer  from 'gulp-autoprefixer';
-import styleLint     from 'gulp-stylelint';
-import errorReporter from './helpers/error-reporter';
-import notify        from './helpers/notify';
-import { server }    from './server';
-import revManifests  from './rev-manifests';
-import paths         from './paths';
-import pkg           from '../package.json';
+import sass                from 'gulp-sass';
+import sourcemaps          from 'gulp-sourcemaps';
+import cssnano             from 'gulp-cssnano';
+import autoprefixer        from 'gulp-autoprefixer';
+import styleLint           from 'gulp-stylelint';
+import errorReporter       from './helpers/error-reporter';
+import notify              from './helpers/notify';
+import revManifests        from './configs/rev-manifests';
+import paths               from './configs/paths';
+import autoprefixerConfig  from './configs/autoprefixer';
+import { server }          from './server';
 
 revManifests.push(
 	'style-rev-manifest'
 );
-
-const autoprefixerOptions = {
-	browsers: pkg.engines.browsers
-};
 
 gulp.task('style:watch', (done) => {
 	gulp.watch(paths.src.styles, gulp.series('style:dev'));
@@ -47,7 +43,7 @@ gulp.task('style:dev', gulp.parallel('style:lint', () =>
 		.pipe(sourcemaps.init())
 			.pipe(sass({ importer: sassModulesImporter() }))
 			.on('error', errorReporter)
-			.pipe(autoprefixer(autoprefixerOptions))
+			.pipe(autoprefixer(autoprefixerConfig))
 		.pipe(sourcemaps.write())
 		.pipe(gulp.dest(paths.dev.root))
 		.pipe(notify('Styles are updated.'))
@@ -59,7 +55,7 @@ gulp.task('style:build', gulp.series('style:lint', () =>
 		.pipe(sass({ importer: sassModulesImporter() }))
 		.on('error', errorReporter)
 		.pipe(size({ title: 'styles' }))
-		.pipe(autoprefixer(autoprefixerOptions))
+		.pipe(autoprefixer(autoprefixerConfig))
 		.pipe(cssnano({
 			reduceIdents: false,
 			zindex:       false

@@ -14,6 +14,7 @@ export default {
 		],<% } else { %>
 		images:   'src/**/*.{jpg,webp,png,svg,gif}',<% } %>
 		styles:   'src/**/*.scss',
+		app:      'src/app',
 		scripts:  [
 			'src/app/main.js',
 			'src/app/**/*.js'
@@ -52,6 +53,7 @@ export default {
 		],<% } else { %>
 		images:  'src/**/*.{jpg,webp,png,svg,gif}',<% } %>
 		styles:  'src/**/*.scss',
+		app:     'src/app',
 		scripts: [
 			'src/app/main.js',
 			'src/app/**/*.js'

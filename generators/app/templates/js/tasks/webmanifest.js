@@ -10,9 +10,9 @@ import newer         from 'gulp-newer';
 import size          from 'gulp-size';<% if (gulpTasks.includes('favicon')) { %>
 import json          from 'gulp-json-editor';<% } %>
 import notify        from './helpers/notify';
+import revManifests  from './configs/rev-manifests';
+import paths         from './configs/paths';
 import { server }    from './server';
-import revManifests  from './rev-manifests';
-import paths         from './paths';
 
 revManifests.push(
 	'webmanifest-rev-manifest'
