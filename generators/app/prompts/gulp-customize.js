@@ -27,7 +27,7 @@ function askForGulpCustomize(generator, props, pkg, webman) {
 	}, {
 		type:    'checkbox',
 		name:    'gulpTasks',
-		message: 'What additional tasks do you whant to include into `gulpfile.js`?',
+		message: 'What additional tasks do you whant to include into `gulpfile.babel.js`?',
 		choices: [{
 			name:    'favicon',
 			checked: getValue(

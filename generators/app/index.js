@@ -1,27 +1,14 @@
 /* eslint no-sync: 0 */
 const Generator = require('yeoman-generator');
-const chalk   = require('chalk');
-const yosay   = require('yosay');
-const hasbin  = require('hasbin');
-const fs      = require('fs');
+const chalk  = require('chalk');
+const yosay  = require('yosay');
+const hasbin = require('hasbin');
+const fs     = require('fs');
+
 const prompts = require('./prompts');
-
-const commonFiles = [
-	'.editorconfig',
-	'.gitignore',
-	'.htmllintrc',
-	'.stylelintrc',
-	'LICENSE'
-];
-
-const templateFiles = [
-	'src/index.html',
-	'README.md',
-	'gulpfile.babel.js',
-	'webpack.config.js',
-	'.eslintrc.js',
-	'tasks/**/*'
-];
+const editPackageJson = require('./edit-package-json');
+const editWebmanifest = require('./edit-webmanifest');
+const getFiles = require('./get-files');
 
 module.exports =
 class GeneratorTrigenFrontend extends Generator {
@@ -100,61 +87,17 @@ class GeneratorTrigenFrontend extends Generator {
 
 	_readTargetPackage() {
 		return this.fs.readJSON(
-			this.templatePath(`${this.props.projectType}/package.json`)
+			this.templatePath(`${this.props.projectType}-package.json`)
 		);
 	}
 
-	_editPackage() {
+	_editPackageJson() {
 
 		const targetPkg = this._readTargetPackage(),
-			{ pkg: pkgProps } = this.props;
+			{ pkg: pkgProps } = this.props,
+			{ pkg } = this;
 
-		let { pkg } = this;
-
-		if (!pkgProps) {
-			return;
-		}
-
-		if (!pkg) {
-			pkg = targetPkg;
-		}
-
-		Object.assign(pkg, pkgProps);
-
-		pkg.engines = targetPkg.engines;
-		pkg.scripts = targetPkg.scripts;
-		pkg.babel = targetPkg.babel;
-		pkg.engines.browsers = pkg.browsers;
-
-		if (pkg.license == 'private') {
-			pkg.license = 'UNLICENSED';
-			pkg.private = true;
-		}
-
-		if (pkg.babel && pkg.browsers && Array.isArray(pkg.babel.presets)) {
-			pkg.babel.presets.some((preset) => {
-
-				if (Array.isArray(preset) && preset[0] == 'env') {
-
-					const options = preset[1];
-
-					if (options && typeof options.targets != 'undefined') {
-						options.targets.browsers = pkg.browsers.split(',').map(_ => _.trim());
-					}
-
-					return true;
-				}
-
-				return false;
-			});
-		}
-
-		Reflect.deleteProperty(pkg, 'browsers');
-
-		pkg.dependencies = targetPkg.dependencies;
-		pkg.devDependencies = targetPkg.devDependencies;
-
-		this.pkg = pkg;
+		this.pkg = editPackageJson(pkg, targetPkg, pkgProps);
 	}
 
 	_readTargetWebmanifest() {
@@ -166,76 +109,15 @@ class GeneratorTrigenFrontend extends Generator {
 	_editWebmanifest() {
 
 		const targetWebman = this._readTargetWebmanifest(),
-			{ webman: webmanProps } = this.props;
+			{ webman: webmanProps } = this.props,
+			{ webman } = this;
 
-		let { webman } = this;
-
-		if (!webmanProps) {
-			return;
-		}
-
-		if (!webman) {
-			webman = targetWebman;
-		}
-
-		Object.assign(webman, webmanProps);
-
-		this.webman = webman;
+		this.webman = editWebmanifest(webman, targetWebman, webmanProps);
 	}
 
 	configuring() {
-		this._editPackage();
+		this._editPackageJson();
 		this._editWebmanifest();
-	}
-
-	_getFiles() {
-
-		const { props } = this,
-			{ pkg: pkgProps } = props;
-
-		const projectDir = props.projectType,
-			root = [
-				`!${this.templatePath(`${projectDir}/package.json`)}`
-			],
-			src = [
-				this.templatePath(`${projectDir}/src/**/*`)
-			],
-			templates = templateFiles.map(_ =>
-				this.templatePath(`${projectDir}/${_}`)
-			);
-
-		let skipSrc = false;
-
-		commonFiles.reverse().forEach((file) => {
-
-			if (file == 'LICENSE' && (!pkgProps || pkgProps.license != 'MIT')) {
-				return;
-			}
-
-			root.unshift(this.templatePath(file));
-		});
-
-		templates.forEach((template) => {
-			root.push(`!${template}`);
-			src.push(`!${template}`);
-		});
-
-		if (fs.existsSync(this.destinationPath('src'))) {
-			skipSrc = true;
-			src.push(`!${this.templatePath(`${projectDir}/src/**/*`)}`);
-			templates.push(`!${this.templatePath(`${projectDir}/src/**/*`)}`);
-		}
-
-		if (!props.gulpTasks.includes('favicon')) {
-			src.push(`!${this.templatePath(`${projectDir}/src/favicon.svg`)}`);
-			templates.push(`!${this.templatePath(`${projectDir}/tasks/favicon.js`)}`);
-		}
-
-		if (!props.gulpTasks.includes('webmanifest')) {
-			templates.push(`!${this.templatePath(`${projectDir}/tasks/webmanifest.js`)}`);
-		}
-
-		return { root, skipSrc, src, templates };
 	}
 
 	writing() {
@@ -259,15 +141,21 @@ class GeneratorTrigenFrontend extends Generator {
 			);
 		}
 
-		const { root, skipSrc, src, templates } = this._getFiles();
+		const files = getFiles(props.projectType, this.templatePath.bind(this), {
+			license:     pkgProps && pkgProps.license == 'MIT',
+			src:         !fs.existsSync(this.destinationPath('src')),
+			favicon:     props.gulpTasks.includes('favicon'),
+			webmanifest: props.gulpTasks.includes('webmanifest')
+		});
 
-		this.fs.copy(root, this.destinationRoot());
+		files.forEach(([type, dir, files]) => {
 
-		if (!skipSrc) {
-			this.fs.copy(src, this.destinationPath('src'));
-		}
-
-		this.fs.copyTpl(templates, this.destinationRoot(), props);
+			if (type == 'template') {
+				this.fs.copyTpl(files, this.destinationPath(dir), props);
+			} else {
+				this.fs.copy(files, this.destinationPath(dir));
+			}
+		});
 	}
 
 	install() {
