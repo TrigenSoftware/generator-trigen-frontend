@@ -1,17 +1,20 @@
 
 const common = [
 	'README.md',
+	'.env',
 	'.editorconfig',
-	'.gitfiles',
+	'.gitignore',
 	'.htmllintrc',
 	'.stylelintrc',
+	'.postcssrc.js',
 	'gulpfile.babel.js'
 ];
 
 module.exports =
 function getFiles(projectType, templatePath, {
 	license, src,
-	favicon, webmanifest
+	favicon, webmanifest,
+	sassLoader, svgLoader
 }) {
 	
 	const files = [];
@@ -57,8 +60,25 @@ function getFiles(projectType, templatePath, {
 
 	if (projectType == 'simple') {
 		tasks.push(`!${templatePath('tasks/script.js')}`);
-		tasks.push(`!${templatePath('tasks/configs/webpack.js')}`);
+		tasks.push(`!${templatePath('tasks/configs/webpack/**/*.js')}`);
 		tasks.push(`!${templatePath('tasks/helpers/stringify-values.js')}`);
+	}
+
+	if (projectType == 'simple' || !sassLoader && !svgLoader) {
+		tasks.push(`!${templatePath('tasks/helpers/find-index.js')}`);
+		tasks.push(`!${templatePath('tasks/helpers/apply-reducers.js')}`);
+	}
+
+	if (projectType == 'simple' || !sassLoader) {
+		tasks.push(`!${templatePath('tasks/helpers/find-index.js')}`);
+		tasks.push(`!${templatePath('tasks/helpers/apply-reducers.js')}`);
+		tasks.push(`!${templatePath('tasks/configs/webpack/sass-loader.js')}`);
+	}
+
+	if (projectType == 'simple' || !svgLoader) {
+		tasks.push(`!${templatePath('tasks/helpers/icon-component.js')}`);
+		tasks.push(`!${templatePath('tasks/helpers/svg-to-component.js')}`);
+		tasks.push(`!${templatePath('tasks/configs/webpack/svg-loader.js')}`);
 	}
 
 	files.push(['template', './tasks', tasks]);

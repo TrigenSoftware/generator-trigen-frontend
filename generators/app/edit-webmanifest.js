@@ -6,13 +6,11 @@ function editWebmanifest(sourceWebman, targetWebman, webmanProps) {
 		return sourceWebman;
 	}
 
-	const pkg = Object.assign(
+	const webman = Object.assign(
 		{},
 		sourceWebman || targetWebman,
 		webmanProps
 	);
-
-	Object.assign(webman, webmanProps);
 
 	return webman;
 }

@@ -1,12 +1,13 @@
 /* eslint no-sync: 0 */
 const Generator = require('yeoman-generator');
-const chalk  = require('chalk');
-const yosay  = require('yosay');
-const hasbin = require('hasbin');
-const fs     = require('fs');
+const chalk = require('chalk');
+const yosay = require('yosay');
+const fs    = require('fs');
 
+const { hasYarnOrNpm, gitInit } = require('./helpers');
 const prompts = require('./prompts');
 const editPackageJson = require('./edit-package-json');
+const managePackageDeps = require('./manage-package-deps');
 const editWebmanifest = require('./edit-webmanifest');
 const getFiles = require('./get-files');
 
@@ -94,10 +95,16 @@ class GeneratorTrigenFrontend extends Generator {
 	_editPackageJson() {
 
 		const targetPkg = this._readTargetPackage(),
-			{ pkg: pkgProps } = this.props,
-			{ pkg } = this;
+			{ props, pkg } = this;
 
-		this.pkg = editPackageJson(pkg, targetPkg, pkgProps);
+		this.pkg = managePackageDeps(
+			editPackageJson(pkg, targetPkg, props.pkg),
+			{
+				favicon:    props.gulpTasks.includes('favicon'),
+				sassLoader: props.webpackLoaders.includes('sass'),
+				svgLoader:  props.webpackLoaders.includes('svg')
+			}
+		);
 	}
 
 	_readTargetWebmanifest() {
@@ -145,7 +152,9 @@ class GeneratorTrigenFrontend extends Generator {
 			license:     pkgProps && pkgProps.license == 'MIT',
 			src:         !fs.existsSync(this.destinationPath('src')),
 			favicon:     props.gulpTasks.includes('favicon'),
-			webmanifest: props.gulpTasks.includes('webmanifest')
+			webmanifest: props.gulpTasks.includes('webmanifest'),
+			sassLoader:  props.webpackLoaders.includes('sass'),
+			svgLoader:   props.webpackLoaders.includes('svg')
 		});
 
 		files.forEach(([type, dir, files]) => {
@@ -158,20 +167,27 @@ class GeneratorTrigenFrontend extends Generator {
 		});
 	}
 
+	_gitInit() {
+
+		if (this.props.gitInit) {
+			return gitInit(this.destinationRoot());
+		}
+
+		return Promise.resolve();
+	}
+
 	install() {
-		return new Promise((resolve) => {
-			hasbin.first(['yarn', 'npm'], (pm) => {
+		return this._gitInit().then(() =>
+			hasYarnOrNpm()
+		).then((pm) => {
 
-				const useYarn = pm != 'npm';
+			const useYarn = pm != 'npm';
 
-				if (useYarn) {
-					this.yarnInstall();
-				} else {
-					this.npmInstall();
-				}
-
-				resolve();
-			});
+			if (useYarn) {
+				this.yarnInstall();
+			} else {
+				this.npmInstall();
+			}
 		});
 	}
 };

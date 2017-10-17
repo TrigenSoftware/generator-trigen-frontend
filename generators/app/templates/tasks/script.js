@@ -10,6 +10,7 @@ import esLint               from 'gulp-eslint';
 import webpack              from 'webpack';
 import WebpackDevMiddleware from 'webpack-dev-middleware';<% if (projectType == 'react') { %>
 import WebpackHotMiddleware from 'webpack-hot-middleware';<% } %>
+import HttpProxyMiddleware  from 'http-proxy-middleware';
 import path                 from 'path';
 import notify               from './helpers/notify';
 import errorReporter        from './helpers/error-reporter';

@@ -1,7 +1,20 @@
 /**
  * Webpack configs.
  */
+<%
 
+const webpackLoadersExist = Boolean(webpackLoaders.length);
+
+function printWebpackReducers(env) {
+	
+	const loaders = webpackLoaders
+		.map(_ => `${_}Loader.${env}`)
+		.join(', ');
+
+	return `[${loaders}]`;
+}
+
+%>
 import webpack                    from 'webpack';
 import WebpackBabelMinifyPlugin   from 'babel-minify-webpack-plugin';
 import WebpackManifestPlugin      from 'webpack-manifest-plugin';
@@ -9,15 +22,24 @@ import WebpackChunkManifsetPlugin from 'chunk-manifest-webpack-plugin';
 import update                     from 'immutability-helper';
 import path                       from 'path';
 import stringifyValues            from '../helpers/stringify-values';
-import pkg                        from '../../package.json';
+import findIndex                  from '../helpers/find-index';<% if (webpackLoadersExist) { %>
+import applyReducers              from '../helpers/apply-reducers';<% } %>
+import pkg                        from '../../package.json';<% if (webpackLoaders.includes('sass')) { %>
+import * as sassLoader            from './sass-loader';<% } %><% if (webpackLoaders.includes('svg')) { %>
+import * as svgLoader             from './svg-loader';<% } %>
 
 const cwd = process.cwd();
 
-function configure({ root, entry, dest, publicPath: _publicPath }) {
+function base({
+	root, entry, dest,
+	publicPath: _publicPath
+}) {
 
 	const entries = Array.isArray(entry)
 		? entry
 		: [entry];
+
+	const { babel } = pkg;
 
 	let publicPath = _publicPath;
 
@@ -25,7 +47,9 @@ function configure({ root, entry, dest, publicPath: _publicPath }) {
 		publicPath = path.join('/', path.basename(dest), '/');
 	}
 
-	return {
+	return <% if (webpackLoadersExist) {
+		%>applyReducers(<%- printWebpackReducers('base') %>, <%
+	} %>{
 		entry:   entries.map(_ => path.join(cwd, _)),
 		output:  {
 			path:             path.join(cwd, dest),
@@ -40,7 +64,7 @@ function configure({ root, entry, dest, publicPath: _publicPath }) {
 			}
 		},
 		module:  {
-			rules: [[{
+			rules: [{
 				test:   /\.js$/,
 				parser: {
 					amd: false
@@ -49,28 +73,44 @@ function configure({ root, entry, dest, publicPath: _publicPath }) {
 				test:    /\.js$/,
 				exclude: /node_modules/,
 				loader:  'babel-loader',
-				query:   update(pkg.babel, {
+				query:   update(babel, {
 					babelrc: { $set: false },
 					presets: {
-						0: { 1: { modules: { $set: false } } }
+						[findIndex(0, 'env', babel.presets)]: {
+							1: {
+								modules: { $set: false }
+							}
+						}
 					}
 				})
 			}]
 		},
 		plugins: []
-	};
+	}<% if (webpackLoadersExist) { %>)<% } %>;
 }
 
 export function dev(params) {
-	return update(configure(params), {<% if (projectType == 'reactjs') { %>
+
+	const config = base(params),
+		{ rules } = config.module;
+
+	return <% if (webpackLoadersExist) {
+		%>applyReducers(<%- printWebpackReducers('dev') %>, <%
+	} %>update(config, {<% if (projectType == 'reactjs') { %>
 		entry:   { $unshift: [
 			'react-hot-loader/patch',
 			'webpack-hot-middleware/client?http://localhost:3000/&reload=true'
 		] },<% } %>
 		devtool: { $set: 'cheap-module-eval-source-map' },<% if (projectType == 'reactjs') { %>
-		module:  { rules: {
-			1: { query: { plugins: { $unshift: ['react-hot-loader/babel'] } } }
-		} },<% } %>
+		module:  {
+			rules: {
+				[findIndex('loader', 'babel-loader', rules)]: {
+					query: {
+						plugins: { $unshift: ['react-hot-loader/babel'] }
+					}
+				}
+			}
+		},<% } %>
 		plugins: { $push: [
 			new webpack.DefinePlugin({
 				'process.env': {
@@ -82,14 +122,16 @@ export function dev(params) {
 			new webpack.NamedModulesPlugin(),
 			new webpack.NoEmitOnErrorsPlugin()
 		] }
-	});
+	})<% if (webpackLoadersExist) { %>)<% } %>;
 }
 
 export function build(params) {
 
-	const config = configure(params);
+	const config = base(params);
 
-	return update(config, {
+	return <% if (webpackLoadersExist) {
+		%>applyReducers(<%- printWebpackReducers('build') %>, <%
+	} %>update(config, {
 		output:  {
 			filename:      { $set: '[name]-[chunkhash].js' },
 			chunkFilename: { $set: '[name]-[chunkhash].js' }
@@ -121,5 +163,5 @@ export function build(params) {
 				minChunks: Infinity
 			})
 		] }
-	});
+	})<% if (webpackLoadersExist) { %>)<% } %>;
 }

@@ -1,7 +1,12 @@
 /**
  * Style tasks
  */
-
+<% if (webpackLoaders.includes('sass')) { %>
+import gulp                from 'gulp';
+import styleLint           from 'gulp-stylelint';
+import errorReporter       from './helpers/error-reporter';
+import paths               from './configs/paths';
+<% } else { %>
 import gulp                from 'gulp';
 import * as teleport       from 'gulp-teleport';
 import rev                 from 'gulp-rev';
@@ -24,9 +29,13 @@ import { server }          from './server';
 revManifests.push(
 	'style-rev-manifest'
 );
-
+<% } %>
 gulp.task('style:watch', (done) => {
-	gulp.watch(paths.src.styles, gulp.series('style:dev'));
+	gulp.watch(paths.src.styles, gulp.series(<% if (webpackLoaders.includes('sass')) {
+		%>'style:lint'<%
+	} else {
+		%>'style:dev'<%
+	} %>));
 	done();
 });
 
@@ -38,7 +47,7 @@ gulp.task('style:lint', () =>
 		}))
 		.on('error', errorReporter)
 );
-
+<% if (!webpackLoaders.includes('sass')) { %>
 gulp.task('style:dev', gulp.parallel('style:lint', () =>
 	gulp.src(paths.src.styles)
 		.pipe(sourcemaps.init())
@@ -68,3 +77,4 @@ gulp.task('style:build', gulp.series('style:lint', () =>
 		.pipe(notify('Styles are compiled.'))
 		.pipe(teleport.to('style-rev-manifest'))
 ));
+<% } %>

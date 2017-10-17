@@ -1,3 +1,5 @@
+const { exec } = require('child_process');
+const hasbin = require('hasbin');
 
 exports.getValue =
 function getValue(...values) {
@@ -42,3 +44,33 @@ function getValue(...values) {
 
 	return result;
 };
+
+exports.hasYarnOrNpm =
+function hasYarnOrNpm() {
+	return new Promise((resolve) => {
+		hasbin.first(['yarn', 'npm'], resolve);
+	});
+}
+
+exports.gitInit =
+function gitInit(cwd) {
+	return new Promise((resolve, reject) => {
+		exec('git init', { cwd }, (err) => {
+
+			if (err) {
+				reject(err);
+				return;
+			}
+
+			exec('git add .', { cwd }, (err) => {
+
+				if (err) {
+					reject(err);
+					return;
+				}
+
+				resolve();
+			});
+		});
+	});
+}
