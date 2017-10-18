@@ -32,7 +32,7 @@
     "eslint": "^3.19.0",
     "eslint-config-trigen": "^1.2.0",
     "gulp": "github:gulpjs/gulp#4.0",
-    "gulp-cache": "git+https://github.com/TrigenSoftware/gulp-cache.git#one-to-many",
+    "gulp-cache": "^0.5.0",
     "gulp-cli": "^1.2.2",
     "gulp-eslint": "^3.0.1",
     "gulp-html-linter": "^1.0.0",

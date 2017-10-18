@@ -3,10 +3,10 @@
  */
 
 import gulp   from 'gulp';
-import cache  from 'gulp-cache';
 import dotenv from 'dotenv';
 import del    from 'del';
 import path   from 'path';
+import cache  from './tasks/configs/cache';
 import paths  from './tasks/configs/paths';
 import './tasks/server';
 import './tasks/copy';
@@ -20,7 +20,7 @@ import './tasks/script';
 dotenv.config();
 
 gulp.task('cache:clear', (done) =>
-	cache.clearAll(done)
+	cache.clear(null, done)
 );
 
 gulp.task('clear', () =>
