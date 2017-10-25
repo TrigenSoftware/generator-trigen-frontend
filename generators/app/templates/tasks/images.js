@@ -5,6 +5,7 @@
 import gulp          from 'gulp';
 import * as teleport from 'gulp-teleport';
 import rev           from 'gulp-rev';
+import revFormat     from 'gulp-rev-format';
 import newer         from 'gulp-newer';
 import cache         from 'gulp-cache';
 import size          from 'gulp-size';
@@ -55,6 +56,7 @@ gulp.task('images:build', () =>
 			fileCache: cacheStore
 		}))
 		.pipe(rev())
+		.pipe(revFormat({ prefix: '.' }))
 		.pipe(size({ title: 'images optimized' }))
 		.pipe(gulp.dest(paths.build.root))
 		.pipe(rev.manifest())

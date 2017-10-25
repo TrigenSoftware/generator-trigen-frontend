@@ -1,14 +1,24 @@
 import 'babel-polyfill';<% if (projectType == 'reactjs') { %>
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Clicker from './clicker/clicker';
+import Clicker from './clicker/clicker';<% if (gulpTasks.includes('offline')) { %>
+import registerServiceWorker from './sw';
+
+registerServiceWorker({ scope: '/' }).catch((err) => {
+	console.error(err); // eslint-disable-line
+});<% } %>
 
 ReactDOM.render(
 	<Clicker/>,
 	document.querySelector('#view')
 );
 <% } else { %>
-import { increase } from './clicker/clicker';
+import { increase } from './clicker/clicker';<% if (gulpTasks.includes('offline')) { %>
+import registerServiceWorker from './sw';
+
+registerServiceWorker({ scope: '/' }).catch((err) => {
+	console.error(err); // eslint-disable-line
+});<% } %>
 
 document.querySelector('header').addEventListener('click', () => {
 	document.querySelector('header h1').innerText = increase();

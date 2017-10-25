@@ -100,9 +100,11 @@ class GeneratorTrigenFrontend extends Generator {
 		this.pkg = managePackageDeps(
 			editPackageJson(pkg, targetPkg, props.pkg),
 			{
-				favicon:    props.gulpTasks.includes('favicon'),
-				sassLoader: props.webpackLoaders.includes('sass'),
-				svgLoader:  props.webpackLoaders.includes('svg')
+				favicon:         props.gulpTasks.includes('favicon'),
+				offline:         props.gulpTasks.includes('offline'),
+				offlineManifest: props.gulpTasks.includes('offlineManifest'),
+				sassLoader:      props.webpackLoaders.includes('sass'),
+				svgLoader:       props.webpackLoaders.includes('svg')
 			}
 		);
 	}
@@ -153,6 +155,7 @@ class GeneratorTrigenFrontend extends Generator {
 			src:         !fs.existsSync(this.destinationPath('src')),
 			favicon:     props.gulpTasks.includes('favicon'),
 			webmanifest: props.gulpTasks.includes('webmanifest'),
+			offline:     props.gulpTasks.includes('offline'),
 			sassLoader:  props.webpackLoaders.includes('sass'),
 			svgLoader:   props.webpackLoaders.includes('svg')
 		});

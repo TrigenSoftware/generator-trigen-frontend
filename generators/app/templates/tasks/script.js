@@ -8,7 +8,7 @@ import * as teleport        from 'gulp-teleport';
 import TeleportFs           from 'gulp-teleport/lib/fs';
 import esLint               from 'gulp-eslint';
 import webpack              from 'webpack';
-import WebpackDevMiddleware from 'webpack-dev-middleware';<% if (projectType == 'react') { %>
+import WebpackDevMiddleware from 'webpack-dev-middleware';<% if (projectType == 'reactjs') { %>
 import WebpackHotMiddleware from 'webpack-hot-middleware';<% } %>
 import HttpProxyMiddleware  from 'http-proxy-middleware';
 import path                 from 'path';
@@ -17,6 +17,7 @@ import errorReporter        from './helpers/error-reporter';
 import revManifests         from './configs/rev-manifests';
 import paths                from './configs/paths';
 import browserSyncConfig    from './configs/browser-sync';
+import offlineConfig        from './configs/offline';
 import * as webpackConfig   from './configs/webpack';
 import { server }           from './server';
 
@@ -24,13 +25,15 @@ revManifests.push(
 	'script-rev-manifest'
 );
 
+const scriptsFiles = path.join(paths.src.app, '**/*.js');
+
 gulp.task('script:watch', (done) => {
-	gulp.watch(paths.src.scripts, gulp.series('script:lint'));
+	gulp.watch(scriptsFiles, gulp.series('script:lint'));
 	done();
 });
 
 gulp.task('script:lint', () =>
-	gulp.src(paths.src.scripts)
+	gulp.src(scriptsFiles)
 		.pipe(esLint())
 		.pipe(esLint.format())
 		.pipe(esLint.failAfterError())
@@ -39,10 +42,17 @@ gulp.task('script:lint', () =>
 
 gulp.task('script:dev', (done) => {
 
+	const { src, dev } = paths;
+
 	const webpackDevCompiler = webpack(webpackConfig.dev({
-		root:  paths.src.app,
-		entry: paths.src.scripts[0],
-		dest:  paths.dev.app
+		appRoot:    src.app,
+		entries:    src.scripts,
+		buildRoot:  dev.root,
+		outputPath: dev.app,
+		publicPath: path.join('/', dev.app.replace(dev.root, '')),
+		envify:     {
+			...offlineConfig
+		}
 	}));
 
 	webpackDevCompiler.plugin('done', () => {
@@ -59,7 +69,7 @@ gulp.task('script:dev', (done) => {
 			modules:  false,
 			colors:   true
 		}
-	}));<% if (projectType == 'react') { %>
+	}));<% if (projectType == 'reactjs') { %>
 
 	middleware.push(WebpackHotMiddleware(webpackDevCompiler, {
 		reload: true
@@ -71,9 +81,8 @@ gulp.task('script:dev', (done) => {
 
 	const browserSyncWebpackOptionsDev = {
 		...browserSyncConfig,
-		server:     paths.dev.root,
-		httpModule: global.undefined,
-		files:      ['**/*.!js'],
+		server: paths.dev.root,
+		files:  ['**/*.!js'],
 		middleware
 	};
 
@@ -83,10 +92,17 @@ gulp.task('script:dev', (done) => {
 
 gulp.task('script:build', gulp.series('script:lint', (done) => {
 
+	const { src, build } = paths;
+
 	const webpackBuildCompiler = webpack(webpackConfig.build({
-		root:  paths.src.app,
-		entry: paths.src.scripts[0],
-		dest:  paths.build.app
+		appRoot:    src.app,
+		entries:    src.scripts,
+		buildRoot:  build.root,
+		outputPath: build.app,
+		publicPath: path.join('/', build.app.replace(build.root, '')),
+		envify:     {
+			...offlineConfig
+		}
 	}));
 
 	webpackBuildCompiler.outputFileSystem = new TeleportFs((stream) => {
@@ -97,7 +113,7 @@ gulp.task('script:build', gulp.series('script:lint', (done) => {
 		stream('**/webpack-manifest.json')
 			.pipe(teleport.to('webpack-manifest'));
 
-		stream('**/loader-*.js')
+		stream('**/loader.*.js')
 			.pipe(teleport.to('webpack-loader'));
 	});
 

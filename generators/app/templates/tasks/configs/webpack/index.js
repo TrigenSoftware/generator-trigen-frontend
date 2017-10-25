@@ -3,6 +3,10 @@
  */
 <%
 
+if (gulpTasks.includes('offline')) {
+	webpackLoaders.push('sw');
+}
+
 const webpackLoadersExist = Boolean(webpackLoaders.length);
 
 function printWebpackReducers(env) {
@@ -21,38 +25,46 @@ import WebpackManifestPlugin      from 'webpack-manifest-plugin';
 import WebpackChunkManifsetPlugin from 'chunk-manifest-webpack-plugin';
 import update                     from 'immutability-helper';
 import path                       from 'path';
-import stringifyValues            from '../helpers/stringify-values';
-import findIndex                  from '../helpers/find-index';<% if (webpackLoadersExist) { %>
-import applyReducers              from '../helpers/apply-reducers';<% } %>
-import pkg                        from '../../package.json';<% if (webpackLoaders.includes('sass')) { %>
+import { decamelize }             from 'humps';
+import findIndex                  from '../../helpers/find-index';<% if (webpackLoadersExist) { %>
+import applyReducers              from '../../helpers/apply-reducers';<% } %>
+import pkg                        from '../../../package.json';<% if (webpackLoaders.includes('sass')) { %>
 import * as sassLoader            from './sass-loader';<% } %><% if (webpackLoaders.includes('svg')) { %>
-import * as svgLoader             from './svg-loader';<% } %>
+import * as svgLoader             from './svg-loader';<% } %><% if (webpackLoaders.includes('sw')) { %>
+import * as swLoader              from './sw-loader';<% } %>
 
 const cwd = process.cwd();
 
-function base({
-	root, entry, dest,
-	publicPath: _publicPath
-}) {
+function defaultParams(params) {
+	return {
+		buildRoot:  params.outputPath,
+		publicPath: '/',
+		envify:     {},
+		...params
+	};
+}
 
-	const entries = Array.isArray(entry)
-		? entry
-		: [entry];
+function base(inputParams) {
+
+	const params = defaultParams(inputParams);
+
+	const {
+		appRoot, entries,
+		buildRoot, outputPath,
+		publicPath, envify
+	} = params;
 
 	const { babel } = pkg;
 
-	let publicPath = _publicPath;
-
-	if (typeof publicPath != 'string') {
-		publicPath = path.join('/', path.basename(dest), '/');
-	}
-
 	return <% if (webpackLoadersExist) {
-		%>applyReducers(<%- printWebpackReducers('base') %>, <%
+		%>applyReducers(<%- printWebpackReducers('base') %>, params, <%
 	} %>{
-		entry:   entries.map(_ => path.join(cwd, _)),
+		entry:    Object.entries(entries).reduce((entry, [name, src]) => ({
+			...entry,
+			[name]: path.resolve(cwd, src)
+		}), {}),
 		output:  {
-			path:             path.join(cwd, dest),
+			path:             path.resolve(cwd, outputPath),
 			filename:         '[name].js',
 			chunkFilename:    '[name].js',
 			hashDigestLength: 10,
@@ -60,7 +72,7 @@ function base({
 		},
 		resolve: {
 			alias: {
-				'~': path.join(cwd, root)
+				'~': path.resolve(cwd, appRoot)
 			}
 		},
 		module:  {
@@ -85,17 +97,25 @@ function base({
 				})
 			}]
 		},
-		plugins: []
+		plugins: [
+			new webpack.DefinePlugin(
+				Object.entries(envify).reduce((env, [key, value]) => ({
+					...env,
+					[`process.env.${decamelize(key).toUpperCase()}`]: JSON.stringify(value)
+				}) , {})
+			)
+		]
 	}<% if (webpackLoadersExist) { %>)<% } %>;
 }
 
-export function dev(params) {
+export function dev(inputParams) {
 
-	const config = base(params),
+	const params = defaultParams(inputParams),
+		config = base(params),
 		{ rules } = config.module;
 
 	return <% if (webpackLoadersExist) {
-		%>applyReducers(<%- printWebpackReducers('dev') %>, <%
+		%>applyReducers(<%- printWebpackReducers('dev') %>, params, <%
 	} %>update(config, {<% if (projectType == 'reactjs') { %>
 		entry:   { $unshift: [
 			'react-hot-loader/patch',
@@ -112,12 +132,7 @@ export function dev(params) {
 			}
 		},<% } %>
 		plugins: { $push: [
-			new webpack.DefinePlugin({
-				'process.env': {
-					...stringifyValues(process.env),
-					'NODE_ENV': `'development'`
-				}
-			}),<% if (projectType == 'reactjs') { %>
+			new webpack.EnvironmentPlugin(Object.keys(process.env)),<% if (projectType == 'reactjs') { %>
 			new webpack.HotModuleReplacementPlugin(),<% } %>
 			new webpack.NamedModulesPlugin(),
 			new webpack.NoEmitOnErrorsPlugin()
@@ -125,24 +140,20 @@ export function dev(params) {
 	})<% if (webpackLoadersExist) { %>)<% } %>;
 }
 
-export function build(params) {
+export function build(inputParams) {
 
-	const config = base(params);
+	const params = defaultParams(inputParams),
+		config = base(params);
 
 	return <% if (webpackLoadersExist) {
-		%>applyReducers(<%- printWebpackReducers('build') %>, <%
+		%>applyReducers(<%- printWebpackReducers('build') %>, params, <%
 	} %>update(config, {
 		output:  {
-			filename:      { $set: '[name]-[chunkhash].js' },
-			chunkFilename: { $set: '[name]-[chunkhash].js' }
+			filename:      { $set: '[name].[chunkhash].js' },
+			chunkFilename: { $set: '[name].[chunkhash].js' }
 		},
 		plugins: { $push: [
-			new webpack.DefinePlugin({
-				'process.env': {
-					...stringifyValues(process.env),
-					'NODE_ENV': `'production'`
-				}
-			}),
+			new webpack.EnvironmentPlugin(Object.keys(process.env)),
 			new webpack.HashedModuleIdsPlugin(),
 			new WebpackManifestPlugin({
 				fileName: 'rev-manifest.json',

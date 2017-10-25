@@ -1,5 +1,5 @@
 /**
- * Error reporter helper
+ * Error reporter helper.
  */
 
 import notify from './notify';

@@ -5,6 +5,7 @@
 import gulp          from 'gulp';
 import * as teleport from 'gulp-teleport';
 import rev           from 'gulp-rev';
+import revFormat     from 'gulp-rev-format';
 import revReplace    from 'gulp-rev-replace';
 import newer         from 'gulp-newer';
 import size          from 'gulp-size';<% if (gulpTasks.includes('favicon')) { %>
@@ -58,6 +59,7 @@ gulp.task('webmanifest:build', () =>
 			replaceInExtensions: ['.json']
 		}))
 		.pipe(rev())
+		.pipe(revFormat({ prefix: '.' }))
 		.pipe(size({ title: 'webmanifest' }))
 		.pipe(gulp.dest(paths.build.root))
 		.pipe(rev.manifest())
@@ -75,6 +77,7 @@ gulp.task('webmanifest:dev', () =>
 gulp.task('webmanifest:build', () =>
 	gulp.src(paths.src.manifest)
 		.pipe(rev())
+		.pipe(revFormat({ prefix: '.' }))
 		.pipe(size({ title: 'webmanifest' }))
 		.pipe(gulp.dest(paths.build.root))
 		.pipe(rev.manifest())

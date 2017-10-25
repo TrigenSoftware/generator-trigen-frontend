@@ -10,6 +10,7 @@ import paths               from './configs/paths';
 import gulp                from 'gulp';
 import * as teleport       from 'gulp-teleport';
 import rev                 from 'gulp-rev';
+import revFormat           from 'gulp-rev-format';
 import revReplace          from 'gulp-rev-replace';
 import size                from 'gulp-size';
 import sassModulesImporter from 'sass-modules-importer';
@@ -71,6 +72,7 @@ gulp.task('style:build', gulp.series('style:lint', () =>
 			manifest: teleport.waitStream('images-rev-manifest')
 		}))
 		.pipe(rev())
+		.pipe(revFormat({ prefix: '.' }))
 		.pipe(size({ title: 'styles optimized' }))
 		.pipe(gulp.dest(paths.build.root))
 		.pipe(rev.manifest())

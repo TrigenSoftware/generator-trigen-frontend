@@ -48,7 +48,7 @@ function getValue(...values) {
 exports.hasYarnOrNpm =
 function hasYarnOrNpm() {
 	return new Promise((resolve) => {
-		hasbin.first(['yarn', 'npm'], resolve);
+		hasbin.first(['yarn', 'yarn', 'npm'], resolve);
 	});
 }
 

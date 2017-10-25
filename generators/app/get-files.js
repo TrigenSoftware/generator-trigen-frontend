@@ -6,6 +6,7 @@ const common = [
 	'.gitignore',
 	'.htmllintrc',
 	'.stylelintrc',
+	'.eslintrc.js',
 	'.postcssrc.js',
 	'gulpfile.babel.js'
 ];
@@ -14,7 +15,8 @@ module.exports =
 function getFiles(projectType, templatePath, {
 	license, src,
 	favicon, webmanifest,
-	sassLoader, svgLoader
+	sassLoader, svgLoader,
+	offline
 }) {
 	
 	const files = [];
@@ -41,6 +43,11 @@ function getFiles(projectType, templatePath, {
 		if (projectType == 'simple') {
 			sources.push(`!${templatePath('src/**/*.js')}`);
 		}
+
+		if (!offline) {
+			sources.push(`!${templatePath('src/offline.html')}`);
+			sources.push(`!${templatePath('src/app/sw.js')}`);
+		}
 		
 		files.push(['template', './src', sources]);
 		files.push(['copy', './src', [templatePath('src/**/*.jpg')]]);
@@ -59,19 +66,17 @@ function getFiles(projectType, templatePath, {
 	}
 
 	if (projectType == 'simple') {
+		tasks.push(`!${templatePath('.eslintrc.js')}`);
 		tasks.push(`!${templatePath('tasks/script.js')}`);
+		tasks.push(`!${templatePath('tasks/helpers/find-index.js')}`);
 		tasks.push(`!${templatePath('tasks/configs/webpack/**/*.js')}`);
-		tasks.push(`!${templatePath('tasks/helpers/stringify-values.js')}`);
 	}
 
-	if (projectType == 'simple' || !sassLoader && !svgLoader) {
-		tasks.push(`!${templatePath('tasks/helpers/find-index.js')}`);
+	if (projectType == 'simple' || !sassLoader && !svgLoader && !offline) {
 		tasks.push(`!${templatePath('tasks/helpers/apply-reducers.js')}`);
 	}
 
 	if (projectType == 'simple' || !sassLoader) {
-		tasks.push(`!${templatePath('tasks/helpers/find-index.js')}`);
-		tasks.push(`!${templatePath('tasks/helpers/apply-reducers.js')}`);
 		tasks.push(`!${templatePath('tasks/configs/webpack/sass-loader.js')}`);
 	}
 
@@ -79,6 +84,13 @@ function getFiles(projectType, templatePath, {
 		tasks.push(`!${templatePath('tasks/helpers/icon-component.js')}`);
 		tasks.push(`!${templatePath('tasks/helpers/svg-to-component.js')}`);
 		tasks.push(`!${templatePath('tasks/configs/webpack/svg-loader.js')}`);
+	}
+
+	if (projectType == 'simple' || !offline) {
+		tasks.push(`!${templatePath('tasks/offline.js')}`);
+		tasks.push(`!${templatePath('tasks/helpers/glob.js')}`);
+		tasks.push(`!${templatePath('tasks/configs/offline.js')}`);
+		tasks.push(`!${templatePath('tasks/configs/webpack/sw-loader.js')}`);
 	}
 
 	files.push(['template', './tasks', tasks]);

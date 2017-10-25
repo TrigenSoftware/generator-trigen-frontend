@@ -1,3 +1,7 @@
+/**
+ * Generate React-component for SVG.
+ */
+
 import {
 	stringifySymbol,
 	stringify,
@@ -5,7 +9,7 @@ import {
 	generateExport
 } from 'svg-sprite-loader/lib/utils';
 import { stringifyRequest } from 'loader-utils';
-import pascalCase from 'pascal-case';
+import { pascalize } from 'humps';
 import path from 'path';
 
 module.exports =
@@ -22,7 +26,7 @@ function runtimeGenerator({
 		),
 		spriteRequest     = stringifyRequest({ context }, spriteModule),
 		symbolRequest     = stringifyRequest({ context }, symbolModule),
-		displayName       = `Icon${pascalCase(symbol.id)}`;
+		displayName       = `Icon${pascalize(symbol.id)}`;
 
 	return `
 		${generateImport('React', 'react', esModule)}

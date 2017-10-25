@@ -15,7 +15,8 @@ import './tasks/favicon';<% } %><% if (gulpTasks.includes('webmanifest')) { %>
 import './tasks/webmanifest';<% } %>
 import './tasks/images';
 import './tasks/style';
-import './tasks/script';
+import './tasks/script';<% if (gulpTasks.includes('offline')) { %>
+import './tasks/offline';<% } %>
 
 dotenv.config();
 
@@ -62,7 +63,8 @@ gulp.task('build', gulp.series(
 	),
 	'style:build',<% if (projectType != 'simple') { %>
 	'script:build',<% } %>
-	'html:build'
+	'html:build'<% if (gulpTasks.includes('offline')) { %>,
+	'offline'<% } %>
 ));
 
 gulp.task('test', gulp.series(

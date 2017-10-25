@@ -15,10 +15,9 @@ export default {
 		images:   'src/**/*.{jpg,webp,png,svg,gif}',<% } %>
 		styles:   'src/**/*.scss',
 		app:      'src/app',
-		scripts:  [
-			'src/app/main.js',
-			'src/app/**/*.js'
-		],
+		scripts:  {
+			main: 'src/app/main.js'
+		},
 		copy:     [
 			'src/**/*.!(html|jpg|webp|png|svg|gif|scss|js)',
 			'!src/manifest.json'
@@ -54,10 +53,9 @@ export default {
 		images:  'src/**/*.{jpg,webp,png,svg,gif}',<% } %>
 		styles:  'src/**/*.scss',
 		app:     'src/app',
-		scripts: [
-			'src/app/main.js',
-			'src/app/**/*.js'
-		],
+		scripts: {
+			main: 'src/app/main.js'
+		},
 		copy:    'src/**/*.!(html|jpg|webp|png|svg|gif|scss|js)'
 	},
 	dev: <% if (gulpTasks.includes('favicon')) { %>{

@@ -20,7 +20,7 @@ function prompts(generator, pkg, webman) {
 		return askForWebpackCustomize(generator, props, pkg, webman);
 	}).then((_) => {
 		Object.assign(props, _);
-		return askForGitInit(generator);
+		return askForGitInit(generator, props, pkg, webman);
 	}).then((_) => {
 		Object.assign(props, _);
 		generator.config.set(props);

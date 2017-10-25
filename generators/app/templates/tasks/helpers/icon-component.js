@@ -1,3 +1,7 @@
+/**
+ * SVG-icon component.
+ */
+
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 

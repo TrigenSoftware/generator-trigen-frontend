@@ -2,10 +2,16 @@
 module.exports =
 function managePackageDeps(sourcePkg, props) {
 
-	const { devDependencies: depsSource } = sourcePkg;
-		devDependencies = {};
+	const { dependencies, devDependencies } = sourcePkg;
 
-	Object.keys(depsSource).forEach((dep) => {
+	return Object.assign({}, sourcePkg, {
+		dependencies:    applyProps(dependencies, props),
+		devDependencies: applyProps(devDependencies, props)
+	});
+}
+
+function applyProps(deps, props) {
+	return Object.keys(deps).reduce((result, dep) => {
 
 		if (dep[0] == '#') {
 
@@ -14,14 +20,12 @@ function managePackageDeps(sourcePkg, props) {
 				propVal = props[propKey];
 
 			if (not && !propVal || !not && propVal) {
-				Object.assign(devDependencies, depsSource[dep]);
+				return Object.assign({}, result, deps[dep]);
 			}
 
-			return;
+			return result;
 		}
 
-		devDependencies[dep] = depsSource[dep];
-	});
-
-	return Object.assign({}, sourcePkg, { devDependencies });
+		return Object.assign({}, result, { [dep]: deps[dep] });
+	}, {});
 }

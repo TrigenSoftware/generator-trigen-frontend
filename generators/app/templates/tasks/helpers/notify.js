@@ -1,5 +1,5 @@
 /**
- * Notify helper
+ * Notify helper.
  */
 
 import notify_ from 'gulp-notify';
