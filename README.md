@@ -19,7 +19,3 @@ Now yo can run generator
 ```bash
 yo trigen-frontend
 ```
-
-# To do
-
-- [ ] Update method 

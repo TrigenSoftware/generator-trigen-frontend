@@ -58,6 +58,7 @@
     "gulp-srcset": "^1.1.0",
     "gulp-stylelint": "^3.8.0",
     "gulp-teleport": "^2.2.1",
+    "gulp-twig": "^1.1.1",
     "gulp-util": "^3.0.8",
     "htmllint-config-trigen": "^1.1.0",
     "http-proxy-middleware": "^0.17.4",

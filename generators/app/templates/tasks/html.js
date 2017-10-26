@@ -9,6 +9,7 @@ import newer          from 'gulp-newer';
 import size           from 'gulp-size';
 import replace        from 'gulp-replace';
 import merge          from 'gulp-merge-json';
+import twig           from 'gulp-twig';
 import progressiveCss from 'gulp-progressive-css';
 import htmlmin        from 'gulp-htmlmin';
 import htmlLint       from 'gulp-html-linter';
@@ -58,7 +59,10 @@ gulp.task('html:lint', () =>
 
 gulp.task('html:dev', gulp.parallel('html:lint', () =>
 	gulp.src(paths.src.html)
-		.pipe(newer(paths.dev.root))<% if (gulpTasks.includes('favicon')) { %>
+		.pipe(newer(paths.dev.root))
+		.pipe(twig({
+			data: { ...process.env }
+		}))<% if (gulpTasks.includes('favicon')) { %>
 		.pipe(teleport.wait('favicons'))
 		.pipe(replaceFavicon())<% } %>
 		.pipe(gulp.dest(paths.dev.root))
@@ -67,7 +71,10 @@ gulp.task('html:dev', gulp.parallel('html:lint', () =>
 ));
 
 gulp.task('html:build', gulp.series('html:lint', () =>
-	gulp.src(paths.src.html)<% if (gulpTasks.includes('favicon')) { %>
+	gulp.src(paths.src.html)
+		.pipe(twig({
+			data: { ...process.env }
+		}))<% if (gulpTasks.includes('favicon')) { %>
 		.pipe(teleport.wait('favicons'))
 		.pipe(replaceFavicon())<% } %>
 		.pipe(revReplace({

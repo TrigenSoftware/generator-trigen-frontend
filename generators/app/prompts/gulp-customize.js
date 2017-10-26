@@ -24,15 +24,19 @@ function askForGulpCustomize(generator, props, pkg, webman) {
 				[props, 'gulpTasks', _ => _.includes('webmanifest')],
 				false
 			)
-		}, {
+		}]
+	}];
+
+	if (props.projectType != 'simple') {
+		gulpCustomizePrompts.choices[0].push({
 			name:    'offline - precaching assets with ServiceWorker',
 			value:   'offline',
 			checked: getValue(
 				[props, 'gulpTasks', _ => _.includes('offline')],
 				false
 			)
-		}]
-	}];
+		});
+	}
 
 	return generator.prompt(gulpCustomizePrompts).then((result) => {
 
