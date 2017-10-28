@@ -98,6 +98,7 @@ function base(inputParams) {
 			}]
 		},
 		plugins: [
+			new webpack.EnvironmentPlugin(Object.keys(process.env)),
 			new webpack.DefinePlugin(
 				Object.entries(envify).reduce((env, [key, value]) => ({
 					...env,
@@ -131,8 +132,7 @@ export function dev(inputParams) {
 				}
 			}
 		},<% } %>
-		plugins: { $push: [
-			new webpack.EnvironmentPlugin(Object.keys(process.env)),<% if (projectType == 'reactjs') { %>
+		plugins: { $push: [<% if (projectType == 'reactjs') { %>
 			new webpack.HotModuleReplacementPlugin(),<% } %>
 			new webpack.NamedModulesPlugin(),
 			new webpack.NoEmitOnErrorsPlugin()
@@ -153,7 +153,6 @@ export function build(inputParams) {
 			chunkFilename: { $set: '[name].[chunkhash].js' }
 		},
 		plugins: { $push: [
-			new webpack.EnvironmentPlugin(Object.keys(process.env)),
 			new webpack.HashedModuleIdsPlugin(),
 			new WebpackManifestPlugin({
 				fileName: 'rev-manifest.json',

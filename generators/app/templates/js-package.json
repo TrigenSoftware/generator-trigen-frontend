@@ -57,6 +57,7 @@
     "gulp-util": "^3.0.8",
     "htmllint-config-trigen": "^1.1.0",
     "http-proxy-middleware": "^0.17.4",
+    "humps": "^2.0.1",
     "immutability-helper": "^2.1.1",
     "stylelint-config-trigen": "^1.6.1",
     "webpack": "^3.5.5",
@@ -87,7 +88,6 @@
     },
     "#offline": {
       "glob": "^7.1.2",
-      "humps": "^2.0.1",
       "service-worker-loader": "https://github.com/TrigenSoftware/service-worker-loader.git#dist",
       "workbox-build": "^2.1.0"
     },

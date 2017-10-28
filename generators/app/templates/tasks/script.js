@@ -16,8 +16,8 @@ import notify               from './helpers/notify';
 import errorReporter        from './helpers/error-reporter';
 import revManifests         from './configs/rev-manifests';
 import paths                from './configs/paths';
-import browserSyncConfig    from './configs/browser-sync';
-import offlineConfig        from './configs/offline';
+import browserSyncConfig    from './configs/browser-sync';<% if (gulpTasks.includes('offline')) { %>
+import offlineConfig        from './configs/offline';<% } %>
 import * as webpackConfig   from './configs/webpack';
 import { server }           from './server';
 
@@ -50,9 +50,9 @@ gulp.task('script:dev', (done) => {
 		buildRoot:  dev.root,
 		outputPath: dev.app,
 		publicPath: path.join('/', dev.app.replace(dev.root, '')),
-		envify:     {
+		envify:     {<% if (gulpTasks.includes('offline')) { %>
 			...offlineConfig
-		}
+		<% } %>}
 	}));
 
 	webpackDevCompiler.plugin('done', () => {
@@ -100,9 +100,9 @@ gulp.task('script:build', gulp.series('script:lint', (done) => {
 		buildRoot:  build.root,
 		outputPath: build.app,
 		publicPath: path.join('/', build.app.replace(build.root, '')),
-		envify:     {
+		envify:     {<% if (gulpTasks.includes('offline')) { %>
 			...offlineConfig
-		}
+		<% } %>}
 	}));
 
 	webpackBuildCompiler.outputFileSystem = new TeleportFs((stream) => {

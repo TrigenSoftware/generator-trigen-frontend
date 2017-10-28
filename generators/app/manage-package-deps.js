@@ -8,7 +8,7 @@ function managePackageDeps(sourcePkg, props) {
 		dependencies:    applyProps(dependencies, props),
 		devDependencies: applyProps(devDependencies, props)
 	});
-}
+};
 
 function applyProps(deps, props) {
 	return Object.keys(deps).reduce((result, dep) => {

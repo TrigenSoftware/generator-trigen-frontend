@@ -4,7 +4,7 @@ $section-text-color: green;
 section {
 	display: block;
 	position: relative;
-	background: url('../images/office.jpg') center center no-repeat;
+	background: url('<% if (!webpackLoaders.includes('sass')) { %>../images/<% } %>office.jpg') center center no-repeat;
 	background-size: cover;
 
 	&::before {

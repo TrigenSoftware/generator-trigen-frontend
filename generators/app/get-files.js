@@ -18,10 +18,9 @@ function getFiles(projectType, templatePath, {
 	sassLoader, svgLoader,
 	offline
 }) {
-	
-	const files = [];
 
-	const rootFiles = common.map(_ => templatePath(_));;
+	const files = [],
+		rootFiles = common.map(_ => templatePath(_));
 
 	if (license) {
 		rootFiles.unshift(templatePath('LICENSE'));
@@ -36,6 +35,10 @@ function getFiles(projectType, templatePath, {
 			`!${templatePath('src/**/*.jpg')}`
 		];
 
+		const copySources = [
+			templatePath('src/**/*.jpg')
+		];
+
 		if (!favicon) {
 			sources.push(`!${templatePath('src/favicon.svg')}`);
 		}
@@ -48,9 +51,15 @@ function getFiles(projectType, templatePath, {
 			sources.push(`!${templatePath('src/offline.html')}`);
 			sources.push(`!${templatePath('src/app/sw.js')}`);
 		}
-		
+
+		if (sassLoader) {
+			copySources.push(`!${templatePath('src/images/**/*.jpg')}`);
+		} else {
+			copySources.push(`!${templatePath('src/app/**/*.jpg')}`);
+		}
+
 		files.push(['template', './src', sources]);
-		files.push(['copy', './src', [templatePath('src/**/*.jpg')]]);
+		files.push(['copy', './src', copySources]);
 	}
 
 	const tasks = [
@@ -59,6 +68,7 @@ function getFiles(projectType, templatePath, {
 
 	if (!favicon) {
 		tasks.push(`!${templatePath('tasks/favicon.js')}`);
+		tasks.push(`!${templatePath('tasks/configs/favicons.js')}`);
 	}
 
 	if (!webmanifest) {
@@ -96,4 +106,4 @@ function getFiles(projectType, templatePath, {
 	files.push(['template', './tasks', tasks]);
 
 	return files;
-}
+};

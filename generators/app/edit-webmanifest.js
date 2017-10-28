@@ -13,4 +13,4 @@ function editWebmanifest(sourceWebman, targetWebman, webmanProps) {
 	);
 
 	return webman;
-}
+};

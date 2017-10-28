@@ -14,13 +14,13 @@ import './tasks/html';<% if (gulpTasks.includes('favicon')) { %>
 import './tasks/favicon';<% } %><% if (gulpTasks.includes('webmanifest')) { %>
 import './tasks/webmanifest';<% } %>
 import './tasks/images';
-import './tasks/style';
-import './tasks/script';<% if (gulpTasks.includes('offline')) { %>
+import './tasks/style';<% if (projectType != 'simple') { %>
+import './tasks/script';<% } %><% if (gulpTasks.includes('offline')) { %>
 import './tasks/offline';<% } %>
 
 dotenv.config();
 
-gulp.task('cache:clear', (done) =>
+gulp.task('cache:clear', done =>
 	cache.clear(null, done)
 );
 
@@ -46,8 +46,8 @@ gulp.task('dev', gulp.series(<% if (projectType == 'simple') { %>
 		'favicon:dev',<% } %>
 		'images:dev'<% if (gulpTasks.includes('webmanifest')) { %>,
 		'webmanifest:dev'<% } %>
-	),
-	'style:dev',
+	),<% if (!webpackLoaders.includes('sass')) { %>
+	'style:dev',<% } %>
 	'html:dev',<% if (projectType != 'simple') { %>
 	'script:dev',<% } %>
 	'watch'
@@ -60,8 +60,8 @@ gulp.task('build', gulp.series(
 		'favicon:build',<% } %>
 		'images:build'<% if (gulpTasks.includes('webmanifest')) { %>,
 		'webmanifest:build'<% } %>
-	),
-	'style:build',<% if (projectType != 'simple') { %>
+	),<% if (!webpackLoaders.includes('sass')) { %>
+	'style:build',<% } %><% if (projectType != 'simple') { %>
 	'script:build',<% } %>
 	'html:build'<% if (gulpTasks.includes('offline')) { %>,
 	'offline'<% } %>

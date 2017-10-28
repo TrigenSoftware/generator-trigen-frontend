@@ -1,10 +1,10 @@
 const { getValue } = require('../helpers');
 
 module.exports =
-function askForWebpackCustomize(generator, props, pkg, webman) {
+function askForWebpackCustomize(generator, props) {
 
 	if (props.projectType == 'simple') {
-		return Promise.resolve({});
+		return Promise.resolve({ webpackLoaders: [] });
 	}
 
 	const webpackCustomizePrompts = [{

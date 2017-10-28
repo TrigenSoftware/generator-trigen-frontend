@@ -5,7 +5,7 @@
 export default {
 	staticFiles:      [
 		'*.html',
-		'images/**/*',
+		<% if (webpackLoaders.includes('sass')) { %>// <% } %>'images/**/*',
 		'app/**/*'
 	],
 	navigateFallback: 'offline.html'

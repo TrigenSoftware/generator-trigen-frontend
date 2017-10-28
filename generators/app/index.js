@@ -68,12 +68,11 @@ class GeneratorTrigenFrontend extends Generator {
 		}
 
 		if (silent) {
-			
+
 			const props = this.config.getAll();
 
 			if (!Object.keys(props).length) {
-				this.log(chalk.red('`.yo-rc.json` file not found.'));
-				process.exit(1);
+				throw new Error(chalk.red('`.yo-rc.json` file not found.'));
 			}
 
 			this.props = props;

@@ -28,4 +28,4 @@ function gitInit(generator, props) {
 
 		return generator.prompt(gitInitPrompts);
 	});
-}
+};

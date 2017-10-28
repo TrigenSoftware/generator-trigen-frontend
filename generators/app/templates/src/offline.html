@@ -9,10 +9,11 @@
 		<meta name="format-detection" content="telephone=no"><% if (!gulpTasks.includes('favicon')) { %>
 		<meta name="theme-color" content="#42c88a"><% } %>
 		<link rel="shortcut icon" href="favicon.svg"><% if (gulpTasks.includes('webmanifest')) { %>
-		<link rel="manifest" href="manifest.json"><% } %>
+		<link rel="manifest" href="manifest.json"><% } %><% if (webpackLoaders.includes('sass')) { %>
+		<link rel="stylesheet" href="app/main.css"><% } else { %>
 		<link rel="stylesheet" priority="critical" href="app/critical.css">
 		<link rel="stylesheet" priority="queued" href="app/content.css">
-		<link rel="stylesheet" priority="queued" href="app/footer.css"><% if (projectType != 'simple') { %>
+		<link rel="stylesheet" priority="queued" href="app/footer.css"><% } %><% if (projectType != 'simple') { %>
 		<script defer src="app/main.js"></script><% } %>
 	</head>
 	<body>

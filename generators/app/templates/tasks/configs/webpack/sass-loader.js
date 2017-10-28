@@ -6,9 +6,9 @@ import WebpackExtractTextPlugin from 'extract-text-webpack-plugin';
 import autoprefixer             from 'autoprefixer';
 import cssnano                  from 'cssnano';
 import update                   from 'immutability-helper';
-import autoprefixerConfig       from './autoprefixer';
-import cssnanoConfig            from './cssnano';
-import findIndex                from '../helpers/find-index';
+import autoprefixerConfig       from '../autoprefixer';
+import cssnanoConfig            from '../cssnano';
+import findIndex                from '../../helpers/find-index';
 
 export function base(config) {
 	return update(config, {
@@ -56,8 +56,11 @@ export function base(config) {
 					}
 				}]
 			}, {
-				test:   /\.(eot|woff|ttf)$/,
-				loader: 'file-loader'
+				test:    /\.(eot|woff|ttf|jpg|webp|png|svg|gif)$/,
+				loader:  'file-loader',
+				options: {
+					name: '[name].[hash:10].[ext]'
+				}
 			}] }
 		}
 	});
@@ -86,7 +89,7 @@ export function build(config) {
 	const { rules } = config.module;
 
 	const extractSass = new WebpackExtractTextPlugin({
-		filename:  '[name]-[contenthash:10].css',
+		filename:  '[name].[contenthash:10].css',
 		allChunks: true
 	});
 
@@ -115,7 +118,7 @@ export function build(config) {
 					})
 				}
 			}
-		},
+		}},
 		plugins: { $push: [extractSass] }
 	});
 }

@@ -27,7 +27,7 @@ gulp.task('images:watch', (done) => {
 
 gulp.task('images:dev', () =>
 	gulp.src(paths.src.images)
-		.pipe(newer(paths.dev.root))
+		.pipe(newer(paths.dev.images))
 		.pipe(srcset([{
 			match: '**/*.jpg'
 		}, {
@@ -37,7 +37,7 @@ gulp.task('images:dev', () =>
 		}], {
 			skipOptimization: true
 		}))
-		.pipe(gulp.dest(paths.dev.root))
+		.pipe(gulp.dest(paths.dev.images))
 		.pipe(notify('Images are updated.'))
 		.pipe(server.stream({ once: true }))
 );
@@ -58,7 +58,7 @@ gulp.task('images:build', () =>
 		.pipe(rev())
 		.pipe(revFormat({ prefix: '.' }))
 		.pipe(size({ title: 'images optimized' }))
-		.pipe(gulp.dest(paths.build.root))
+		.pipe(gulp.dest(paths.build.images))
 		.pipe(rev.manifest())
 		.pipe(notify('Images are generated.'))
 		.pipe(teleport.to('images-rev-manifest'))

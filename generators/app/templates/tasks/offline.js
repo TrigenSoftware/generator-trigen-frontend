@@ -32,7 +32,7 @@ gulp.task('offline:sw', () =>
 
 		const [globPatterns, globIgnores] = glob.splitYesNot(offlineConfig.staticFiles);
 
-		return Promise.all(files.map((file) =>
+		return Promise.all(files.map(file =>
 			workbox.injectManifest({
 				swSrc:                     file,
 				swDest:                    file,

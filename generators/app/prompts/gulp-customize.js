@@ -28,7 +28,7 @@ function askForGulpCustomize(generator, props, pkg, webman) {
 	}];
 
 	if (props.projectType != 'simple') {
-		gulpCustomizePrompts.choices[0].push({
+		gulpCustomizePrompts[0].choices.push({
 			name:    'offline - precaching assets with ServiceWorker',
 			value:   'offline',
 			checked: getValue(

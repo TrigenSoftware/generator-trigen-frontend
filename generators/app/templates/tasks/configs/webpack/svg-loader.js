@@ -4,7 +4,8 @@
 
 import update    from 'immutability-helper';
 import path      from 'path';
-import findIndex from '../helpers/find-index';
+import findIndex from '../../helpers/find-index';
+import paths     from '../paths';
 
 const cwd = process.cwd();
 
@@ -40,6 +41,6 @@ export function build(config) {
 			[findIndex('test', '/\\.svg$/', rules)]: {
 				use: { $push: ['svgo-loader'] }
 			}
-		}
+		}}
 	});
 }

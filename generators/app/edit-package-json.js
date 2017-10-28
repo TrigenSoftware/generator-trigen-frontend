@@ -43,4 +43,4 @@ function editPackageJson(sourcePkg, targetPkg, pkgProps) {
 	pkg.devDependencies = targetPkg.devDependencies;
 
 	return pkg;
-}
+};

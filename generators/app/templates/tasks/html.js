@@ -6,8 +6,8 @@ import gulp           from 'gulp';
 import * as teleport  from 'gulp-teleport';
 import revReplace     from 'gulp-rev-replace';
 import newer          from 'gulp-newer';
-import size           from 'gulp-size';
-import replace        from 'gulp-replace';
+import size           from 'gulp-size';<% if (gulpTasks.includes('favicon') || projectType != 'simple') { %>
+import replace        from 'gulp-replace';<% } %>
 import merge          from 'gulp-merge-json';
 import twig           from 'gulp-twig';
 import progressiveCss from 'gulp-progressive-css';
@@ -42,8 +42,8 @@ function injectWebpackLoader() {
 				.join(';')
 		}</script><script`
 	);
-}<% } %>
-
+}
+<% } %>
 gulp.task('html:watch', (done) => {
 	gulp.watch(paths.src.html, gulp.series('html:dev'));
 	done();

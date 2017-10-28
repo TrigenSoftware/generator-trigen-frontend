@@ -50,7 +50,7 @@ function hasYarnOrNpm() {
 	return new Promise((resolve) => {
 		hasbin.first(['yarn', 'yarn', 'npm'], resolve);
 	});
-}
+};
 
 exports.gitInit =
 function gitInit(cwd) {
@@ -73,4 +73,4 @@ function gitInit(cwd) {
 			});
 		});
 	});
-}
+};
