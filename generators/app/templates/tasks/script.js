@@ -6,6 +6,7 @@ import gulp                 from 'gulp';
 import gutil                from 'gulp-util';
 import * as teleport        from 'gulp-teleport';
 import TeleportFs           from 'gulp-teleport/lib/fs';
+import cache                from 'gulp-cache';
 import esLint               from 'gulp-eslint';
 import webpack              from 'webpack';
 import WebpackDevMiddleware from 'webpack-dev-middleware';<% if (projectType == 'reactjs') { %>
@@ -14,6 +15,8 @@ import HttpProxyMiddleware  from 'http-proxy-middleware';
 import path                 from 'path';
 import notify               from './helpers/notify';
 import errorReporter        from './helpers/error-reporter';
+import eslintCacheKey       from './helpers/eslint-cache-key';
+import cacheStore           from './configs/cache';
 import revManifests         from './configs/rev-manifests';
 import paths                from './configs/paths';
 import browserSyncConfig    from './configs/browser-sync';<% if (gulpTasks.includes('offline')) { %>
@@ -28,13 +31,23 @@ revManifests.push(
 const scriptsFiles = path.join(paths.src.app, '**/*.js');
 
 gulp.task('script:watch', (done) => {
-	gulp.watch(scriptsFiles, gulp.series('script:lint'));
+	gulp.watch(
+		scriptsFiles,
+		{ delay: 1000 },
+		gulp.series('script:lint')
+	);
 	done();
 });
 
 gulp.task('script:lint', () =>
 	gulp.src(scriptsFiles)
-		.pipe(esLint())
+		.pipe(cache(esLint(), {
+			name:      'eslint',
+			fileCache: cacheStore,
+			key:       eslintCacheKey,
+			success:   file => !file.eslint.messages.length,
+			value:     file => ({ eslint: file.eslint })
+		}))
 		.pipe(esLint.format())
 		.pipe(esLint.failAfterError())
 		.on('error', errorReporter)

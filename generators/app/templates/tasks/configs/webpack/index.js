@@ -113,15 +113,24 @@ export function dev(inputParams) {
 
 	const params = defaultParams(inputParams),
 		config = base(params),
-		{ rules } = config.module;
+		{ rules } = config.module;<% if (projectType == 'reactjs') { %>
+
+	const devScripts = [
+		'react-hot-loader/patch',
+		'webpack-hot-middleware/client?http://localhost:3000/&reload=true'
+	];<% } %>
 
 	return <% if (webpackLoadersExist) {
 		%>applyReducers(<%- printWebpackReducers('dev') %>, params, <%
 	} %>update(config, {<% if (projectType == 'reactjs') { %>
-		entry:   { $unshift: [
-			'react-hot-loader/patch',
-			'webpack-hot-middleware/client?http://localhost:3000/&reload=true'
-		] },<% } %>
+		entry:   { $apply: entry =>
+			Object.entries(entry).reduce((entry, [name, src]) => ({
+				...entry,
+				[name]: Array.isArray(src)
+					? [...devScripts, ...src]
+					: [...devScripts, src]
+			}), {})
+		},<% } %>
 		devtool: { $set: 'cheap-module-eval-source-map' },<% if (projectType == 'reactjs') { %>
 		module:  {
 			rules: {
