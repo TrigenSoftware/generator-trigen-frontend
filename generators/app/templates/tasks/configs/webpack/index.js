@@ -10,7 +10,7 @@ if (gulpTasks.includes('offline')) {
 const webpackLoadersExist = Boolean(webpackLoaders.length);
 
 function printWebpackReducers(env) {
-	
+
 	const loaders = webpackLoaders
 		.map(_ => `${_}Loader.${env}`)
 		.join(', ');
@@ -103,7 +103,7 @@ function base(inputParams) {
 				Object.entries(envify).reduce((env, [key, value]) => ({
 					...env,
 					[`process.env.${decamelize(key).toUpperCase()}`]: JSON.stringify(value)
-				}) , {})
+				}), {})
 			)
 		]
 	}<% if (webpackLoadersExist) { %>)<% } %>;

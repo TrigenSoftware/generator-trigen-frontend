@@ -15,7 +15,7 @@ export function base(config) {
 		module: {
 			rules: { $push: [{
 				test: /\.scss$/,
-				use: [{
+				use:  [{
 					loader: 'style-loader'
 				}, {
 					loader:  'css-loader',
@@ -23,10 +23,10 @@ export function base(config) {
 						importLoaders: 1
 					}
 				}, {
-					loader: 'postcss-loader',
+					loader:  'postcss-loader',
 					options: {
 						sourceMap: true,
-						plugins: () => [
+						plugins:   () => [
 							autoprefixer(autoprefixerConfig)
 						]
 					}
@@ -44,7 +44,7 @@ export function base(config) {
 				}]
 			}, {
 				test: /\.css$/,
-				use: [{
+				use:  [{
 					loader: 'style-loader'
 				}, {
 					loader:  'css-loader',

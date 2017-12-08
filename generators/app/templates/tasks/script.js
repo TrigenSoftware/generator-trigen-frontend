@@ -62,7 +62,7 @@ gulp.task('script:dev', (done) => {
 		entries:    src.scripts,
 		buildRoot:  dev.root,
 		outputPath: dev.app,
-		publicPath: path.join('/', dev.app.replace(dev.root, '')),
+		publicPath: path.join('/', dev.app.replace(dev.root, ''), '/'),
 		envify:     {<% if (gulpTasks.includes('offline')) { %>
 			...offlineConfig
 		<% } %>}
@@ -112,7 +112,7 @@ gulp.task('script:build', gulp.series('script:lint', (done) => {
 		entries:    src.scripts,
 		buildRoot:  build.root,
 		outputPath: build.app,
-		publicPath: path.join('/', build.app.replace(build.root, '')),
+		publicPath: path.join('/', build.app.replace(build.root, ''), '/'),
 		envify:     {<% if (gulpTasks.includes('offline')) { %>
 			...offlineConfig
 		<% } %>}
