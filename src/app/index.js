@@ -1,18 +1,15 @@
-/* eslint no-sync: 0 */
-const Generator = require('yeoman-generator');
-const chalk = require('chalk');
-const yosay = require('yosay');
-const fs    = require('fs');
+import fs from 'fs';
+import Generator from 'yeoman-generator';
+import chalk from 'chalk';
+import yosay from 'yosay';
+import { hasYarnOrNpm, gitInit } from './helpers';
+import prompts from './prompts';
+import editPackageJson from './edit-package-json';
+import managePackageDeps from './manage-package-deps';
+import editWebmanifest from './edit-webmanifest';
+import getFiles from './get-files';
 
-const { hasYarnOrNpm, gitInit } = require('./helpers');
-const prompts = require('./prompts');
-const editPackageJson = require('./edit-package-json');
-const managePackageDeps = require('./manage-package-deps');
-const editWebmanifest = require('./edit-webmanifest');
-const getFiles = require('./get-files');
-
-module.exports =
-class GeneratorTrigenFrontend extends Generator {
+export default class GeneratorTrigenFrontend extends Generator {
 
 	constructor(args, opts) {
 
@@ -51,7 +48,7 @@ class GeneratorTrigenFrontend extends Generator {
 		return false;
 	}
 
-	prompting() {
+	async prompting() {
 
 		this.log(yosay(`Welcome to the delightful ${chalk.green('trigen-frontend')} generator!`));
 
@@ -77,12 +74,10 @@ class GeneratorTrigenFrontend extends Generator {
 
 			this.props = props;
 
-			return true;
+			return;
 		}
 
-		return prompts(this, this.pkg, this.webman).then((props) => {
-			this.props = props;
-		});
+		this.props = await prompts(this, this.pkg, this.webman);
 	}
 
 	_readTargetPackage() {
@@ -175,21 +170,20 @@ class GeneratorTrigenFrontend extends Generator {
 			return gitInit(this.destinationRoot());
 		}
 
-		return Promise.resolve();
+		return null;
 	}
 
-	install() {
-		return this._gitInit().then(() =>
-			hasYarnOrNpm()
-		).then((pm) => {
+	async install() {
 
-			const useYarn = pm != 'npm';
+		await this._gitInit();
 
-			if (useYarn) {
-				this.yarnInstall();
-			} else {
-				this.npmInstall();
-			}
-		});
+		const pm = await hasYarnOrNpm(),
+			useYarn = pm != 'npm';
+
+		if (useYarn) {
+			this.yarnInstall();
+		} else {
+			this.npmInstall();
+		}
 	}
-};
+}

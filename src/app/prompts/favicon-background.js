@@ -1,7 +1,6 @@
-const { getValue } = require('../helpers');
+import { getValue } from '../helpers';
 
-module.exports =
-function askForFaviconBackground(generator, props) {
+export default function askForFaviconBackground(generator, props) {
 
 	const faviconBackgroundPrompts = [{
 		type:    'input',
@@ -13,4 +12,4 @@ function askForFaviconBackground(generator, props) {
 	}];
 
 	return generator.prompt(faviconBackgroundPrompts);
-};
+}

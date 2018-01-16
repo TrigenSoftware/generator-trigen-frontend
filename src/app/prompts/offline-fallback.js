@@ -1,7 +1,6 @@
-const { getValue } = require('../helpers');
+import { getValue } from '../helpers';
 
-module.exports =
-function askForOfflineFallback(generator, props) {
+export default function askForOfflineFallback(generator, props) {
 
 	const offlineFallbackPrompts = [{
 		type:    'confirm',
@@ -14,4 +13,4 @@ function askForOfflineFallback(generator, props) {
 	}];
 
 	return generator.prompt(offlineFallbackPrompts);
-};
+}

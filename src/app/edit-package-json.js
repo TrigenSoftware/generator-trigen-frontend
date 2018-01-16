@@ -1,16 +1,14 @@
 
-module.exports =
-function editPackageJson(sourcePkg, targetPkg, pkgProps) {
+export default function editPackageJson(sourcePkg, targetPkg, pkgProps) {
 
 	if (!pkgProps) {
 		return sourcePkg;
 	}
 
-	const pkg = Object.assign(
-		{},
-		sourcePkg || targetPkg,
-		pkgProps
-	);
+	const pkg = {
+		...(sourcePkg || targetPkg),
+		...pkgProps
+	};
 
 	pkg.engines = targetPkg.engines;
 	pkg.scripts = targetPkg.scripts;
@@ -19,6 +17,8 @@ function editPackageJson(sourcePkg, targetPkg, pkgProps) {
 	if (pkg.license == 'private') {
 		pkg.license = 'UNLICENSED';
 		pkg.private = true;
+	} else {
+		Reflect.deleteProperty(pkg, 'private');
 	}
 
 	if (pkg.babel && pkg.browsers && Array.isArray(pkg.babel.presets)) {
@@ -43,4 +43,4 @@ function editPackageJson(sourcePkg, targetPkg, pkgProps) {
 	pkg.devDependencies = targetPkg.devDependencies;
 
 	return pkg;
-};
+}

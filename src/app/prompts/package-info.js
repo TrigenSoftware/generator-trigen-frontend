@@ -1,13 +1,21 @@
-const { getValue } = require('../helpers');
-const path = require('path');
+import path from 'path';
+import { getValue } from '../helpers';
 
 const licenses = [
 	'MIT',
 	'private'
 ];
 
-module.exports =
-function askForPackageInfo(generator, props, pkg) {
+function indexOfLicense(inputLicense) {
+
+	const license = inputLicense == 'UNLICENSED'
+		? 'private'
+		: inputLicense;
+
+	return licenses.indexOf(license);
+}
+
+export default function askForPackageInfo(generator, props, pkg) {
 
 	const destinationRoot = generator.destinationRoot();
 
@@ -60,8 +68,8 @@ function askForPackageInfo(generator, props, pkg) {
 		message: 'license:',
 		choices: licenses,
 		default: getValue(
-			[pkg, 'license', _ => licenses.indexOf(_)],
-			[props, 'pkg', 'license', _ => licenses.indexOf(_)],
+			[pkg, 'license', indexOfLicense],
+			[props, 'pkg', 'license', indexOfLicense],
 			0
 		)
 	}, {
@@ -77,4 +85,4 @@ function askForPackageInfo(generator, props, pkg) {
 	}];
 
 	return generator.prompt(packagePrompts);
-};
+}

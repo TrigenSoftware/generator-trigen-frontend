@@ -1,8 +1,7 @@
-const { exec } = require('child_process');
-const hasbin = require('hasbin');
+import { exec } from 'child_process';
+import hasbin from 'hasbin';
 
-exports.getValue =
-function getValue(...values) {
+export function getValue(...values) {
 
 	let result = global.undefined;
 
@@ -43,17 +42,15 @@ function getValue(...values) {
 	});
 
 	return result;
-};
+}
 
-exports.hasYarnOrNpm =
-function hasYarnOrNpm() {
+export function hasYarnOrNpm() {
 	return new Promise((resolve) => {
 		hasbin.first(['yarn', 'yarn', 'npm'], resolve);
 	});
-};
+}
 
-exports.gitInit =
-function gitInit(cwd) {
+export function gitInit(cwd) {
 	return new Promise((resolve, reject) => {
 		exec('git init', { cwd }, (err) => {
 
@@ -73,4 +70,4 @@ function gitInit(cwd) {
 			});
 		});
 	});
-};
+}

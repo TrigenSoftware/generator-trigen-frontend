@@ -11,8 +11,7 @@ const common = [
 	'gulpfile.babel.js'
 ];
 
-module.exports =
-function getFiles(projectType, templatePath, {
+export default function getFiles(projectType, templatePath, {
 	license, src,
 	favicon, webmanifest,
 	sassLoader, svgLoader,
@@ -106,4 +105,4 @@ function getFiles(projectType, templatePath, {
 	files.push(['template', './tasks', tasks]);
 
 	return files;
-};
+}

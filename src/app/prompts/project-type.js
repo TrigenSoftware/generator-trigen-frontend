@@ -1,4 +1,4 @@
-const { getValue } = require('../helpers');
+import { getValue } from '../helpers';
 
 const projectTypes = {
 	Simple:     'simple',
@@ -9,8 +9,7 @@ const projectTypes = {
 const projectTypesKeys = Object.keys(projectTypes),
 	projectTypesValues = projectTypesKeys.map(_ => projectTypes[_]);
 
-module.exports =
-function askForProjectType(generator, props) {
+export default function askForProjectType(generator, props) {
 
 	const projectTypePrompts = [{
 		type:    'list',
@@ -25,4 +24,4 @@ function askForProjectType(generator, props) {
 	}];
 
 	return generator.prompt(projectTypePrompts);
-};
+}

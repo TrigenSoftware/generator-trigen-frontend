@@ -1,10 +1,9 @@
-const { getValue } = require('../helpers');
+import { getValue } from '../helpers';
 
-module.exports =
-function askForWebpackCustomize(generator, props) {
+export default async function askForWebpackCustomize(generator, props) {
 
 	if (props.projectType == 'simple') {
-		return Promise.resolve({ webpackLoaders: [] });
+		return { webpackLoaders: [] };
 	}
 
 	const webpackCustomizePrompts = [{
@@ -33,4 +32,4 @@ function askForWebpackCustomize(generator, props) {
 	}
 
 	return generator.prompt(webpackCustomizePrompts);
-};
+}
