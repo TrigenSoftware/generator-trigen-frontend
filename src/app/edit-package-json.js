@@ -16,7 +16,6 @@ export default function editPackageJson(sourcePkg, targetPkg, pkgProps) {
 
 	if (pkg.license == 'private') {
 		pkg.license = 'UNLICENSED';
-		pkg.private = true;
 	} else {
 		Reflect.deleteProperty(pkg, 'private');
 	}

@@ -4,7 +4,7 @@
   "description": "Boilerplate for frontend development.",
   "author": "dangreen",
 	"license": "MIT",
-	"private": false,
+	"private": true,
   "repository": "https://github.com/TrigenSoftware/trigen-frontend-boilerplate",
   "main": "gulpfile.babel.js",
   "engines": {
@@ -20,7 +20,7 @@
     "babel-polyfill": "^6.23.0",
     "bootstrap": "4.0.0-alpha.6",
     "#offline": {
-      "workbox-sw": "^2.1.0"
+      "workbox-sw": "^2.1.2"
     }
   },
   "devDependencies": {
@@ -34,10 +34,10 @@
     "chunk-manifest-webpack-plugin": "^1.1.2",
     "del": "^2.2.2",
     "dotenv": "^4.0.0",
-    "eslint": "^3.19.0",
+    "eslint": "^4.15.0",
     "eslint-config-trigen": "^2.3.1",
     "gulp": "github:gulpjs/gulp#4.0",
-    "gulp-cache": "^0.5.0",
+    "gulp-cache": "^1.0.2",
     "gulp-cli": "^1.2.2",
     "gulp-eslint": "^3.0.1",
     "gulp-html-linter": "^1.0.0",
@@ -60,6 +60,7 @@
     "http-proxy-middleware": "^0.17.4",
     "humps": "^2.0.1",
     "immutability-helper": "^2.1.1",
+    "stylelint": "^8.4.0",
     "stylelint-config-trigen": "^1.7.0",
     "webpack": "^3.5.5",
     "webpack-dev-middleware": "^1.12.0",
@@ -89,7 +90,7 @@
     },
     "#offline": {
       "glob": "^7.1.2",
-      "service-worker-loader": "https://github.com/TrigenSoftware/service-worker-loader.git#dist",
+      "service-worker-loader": "^2.0.0",
       "workbox-build": "^2.1.0"
     },
     "#offlineManifest": {

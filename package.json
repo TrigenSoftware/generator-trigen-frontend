@@ -17,7 +17,8 @@
   },
   "scripts": {
     "lint": "eslint --cache 'src/app/*.js' 'src/app/prompts/*.js' 'test/*/{,src/,tasks/}*.js'",
-    "build": "rollup -c",
+    "copyTemplates": "rm -rf generators/app/templates; mkdir -p generators/app; cp -R src/app/templates generators/app/templates",
+    "build": "rollup -c && npm run copyTemplates",
     "watch": "rollup -c -w",
     "prepublishOnly": "npm run build"
   },

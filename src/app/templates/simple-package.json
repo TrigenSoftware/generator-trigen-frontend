@@ -4,7 +4,7 @@
   "description": "Boilerplate for frontend development.",
   "author": "dangreen",
   "license": "MIT",
-	"private": false,
+	"private": true,
   "repository": "https://github.com/TrigenSoftware/trigen-frontend-boilerplate",
   "main": "gulpfile.babel.js",
   "engines": {
@@ -28,7 +28,7 @@
     "dotenv": "^4.0.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-autoprefixer": "^3.1.1",
-    "gulp-cache": "^0.5.0",
+    "gulp-cache": "^1.0.2",
     "gulp-cli": "^1.2.2",
     "gulp-cssnano": "^2.1.2",
     "gulp-html-linter": "^1.0.0",
@@ -51,6 +51,7 @@
     "gulp-util": "^3.0.8",
     "htmllint-config-trigen": "^1.1.1",
     "sass-modules-importer": "^1.2.1",
+    "stylelint": "^8.4.0",
     "stylelint-config-trigen": "^1.7.0",
     "#favicon": {
       "gulp-favicons": "^2.2.7",
