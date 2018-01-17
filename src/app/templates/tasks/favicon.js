@@ -1,21 +1,21 @@
 /**
- * Favicon tasks
+ * Favicon tasks.
  */
 
-import gulp           from 'gulp';
-import * as teleport  from 'gulp-teleport';
-import rev            from 'gulp-rev';
-import revFormat      from 'gulp-rev-format';
-import cache          from 'gulp-cache';
-import size           from 'gulp-size';
-import favicons       from 'gulp-favicons';
-import srcset         from 'gulp-srcset';
-import notify         from './helpers/notify';
-import cacheStore     from './configs/cache';
-import revManifests   from './configs/rev-manifests';
-import paths          from './configs/paths';
+import gulp from 'gulp';
+import * as teleport from 'gulp-teleport';
+import rev from 'gulp-rev';
+import revFormat from 'gulp-rev-format';
+import cache from 'gulp-cache';
+import size from 'gulp-size';
+import favicons from 'gulp-favicons';
+import srcset from 'gulp-srcset';
+import notify from './helpers/notify';
+import cacheStore from './configs/cache';
+import revManifests from './configs/rev-manifests';
+import paths from './configs/paths';
 import faviconsConfig from './configs/favicons';
-import { server }     from './server';
+import { server } from './server';
 
 revManifests.push(
 	'favicons-rev-manifest'
@@ -38,7 +38,8 @@ gulp.task('favicon:watch', (done) => {
 gulp.task('favicon:dev', () =>
 	gulp.src(paths.src.favicon)
 		.pipe(cache(favicons(faviconsConfig), {
-			name: 'favicons'
+			name:      'favicons',
+			fileCache: cacheStore
 		}))
 		<% if (gulpTasks.includes('webmanifest')) {
 		%>.pipe(teleport.to('webmanifest', '**/*.json'))<%
@@ -59,7 +60,8 @@ gulp.task('favicon:dev', () =>
 gulp.task('favicon:build', () =>
 	gulp.src(paths.src.favicon)
 		.pipe(cache(favicons(faviconsConfig), {
-			name: 'favicons'
+			name:      'favicons',
+			fileCache: cacheStore
 		}))
 		<% if (gulpTasks.includes('webmanifest')) {
 		%>.pipe(teleport.to('webmanifest', '**/*.json'))<%

@@ -1,5 +1,5 @@
 /**
- * Offline config
+ * Offline config.
  */
 
 export default {

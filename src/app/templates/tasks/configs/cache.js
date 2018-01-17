@@ -1,5 +1,5 @@
 /**
- * Cache config 
+ * Cache config.
  */
 
 import cache from 'gulp-cache';

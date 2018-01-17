@@ -1,10 +1,10 @@
 /**
- * Server task
+ * Server task.
  */
 
-import gulp              from 'gulp';
-import { create }        from 'browser-sync';
-import paths             from './configs/paths';
+import gulp from 'gulp';
+import { create } from 'browser-sync';
+import paths from './configs/paths';
 import browserSyncConfig from './configs/browser-sync';
 
 export const server = create();

@@ -1,14 +1,14 @@
 /**
- * Offline tasks
+ * Offline tasks.
  */
 
-import gulp          from 'gulp';<% if (gulpTasks.includes('offlineManifest')) { %>
-import manifest      from 'gulp-manifest';<% } %>
-import workbox       from 'workbox-build';
-import path          from 'path';
-import notify        from './helpers/notify';
-import * as glob     from './helpers/glob';
-import paths         from './configs/paths';
+import path from 'path';
+import gulp from 'gulp';<% if (gulpTasks.includes('offlineManifest')) { %>
+import manifest from 'gulp-manifest';<% } %>
+import workbox from 'workbox-build';
+import notify from './helpers/notify';
+import * as glob from './helpers/glob';
+import paths from './configs/paths';
 import offlineConfig from './configs/offline';
 <% if (gulpTasks.includes('offlineManifest')) { %>
 gulp.task('offline:manifest', () =>

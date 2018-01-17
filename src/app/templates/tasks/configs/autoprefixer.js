@@ -1,5 +1,5 @@
 /**
- * Autoprefixer config 
+ * Autoprefixer config.
  */
 
 import pkg from '../../package.json';

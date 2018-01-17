@@ -2,6 +2,7 @@
  * Generate React-component for SVG.
  */
 
+import path from 'path';
 import {
 	stringifySymbol,
 	stringify,
@@ -10,9 +11,9 @@ import {
 } from 'svg-sprite-loader/lib/utils';
 import { stringifyRequest } from 'loader-utils';
 import { pascalize } from 'humps';
-import path from 'path';
 
-module.exports =
+module.exports = runtimeGenerator;
+
 function runtimeGenerator({
 	symbol, config,
 	context, loaderContext
@@ -51,4 +52,4 @@ function runtimeGenerator({
 
 		${generateExport(displayName, esModule)}
 	`;
-};
+}

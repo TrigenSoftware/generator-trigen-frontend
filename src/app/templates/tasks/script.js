@@ -1,28 +1,28 @@
 /**
- * JavaScript tasks
+ * JavaScript tasks.
  */
 
-import gulp                 from 'gulp';
-import gutil                from 'gulp-util';
-import * as teleport        from 'gulp-teleport';
-import TeleportFs           from 'gulp-teleport/lib/fs';
-import cache                from 'gulp-cache';
-import esLint               from 'gulp-eslint';
-import webpack              from 'webpack';
+import path from 'path';
+import gulp from 'gulp';
+import gutil from 'gulp-util';
+import * as teleport from 'gulp-teleport';
+import TeleportFs from 'gulp-teleport/lib/fs';
+import cache from 'gulp-cache';
+import esLint from 'gulp-eslint';
+import webpack from 'webpack';
 import WebpackDevMiddleware from 'webpack-dev-middleware';<% if (projectType == 'reactjs') { %>
 import WebpackHotMiddleware from 'webpack-hot-middleware';<% } %>
-import HttpProxyMiddleware  from 'http-proxy-middleware';
-import path                 from 'path';
-import notify               from './helpers/notify';
-import errorReporter        from './helpers/error-reporter';
-import eslintCacheKey       from './helpers/eslint-cache-key';
-import cacheStore           from './configs/cache';
-import revManifests         from './configs/rev-manifests';
-import paths                from './configs/paths';
-import browserSyncConfig    from './configs/browser-sync';<% if (gulpTasks.includes('offline')) { %>
-import offlineConfig        from './configs/offline';<% } %>
-import * as webpackConfig   from './configs/webpack';
-import { server }           from './server';
+import HttpProxyMiddleware from 'http-proxy-middleware';
+import notify from './helpers/notify';
+import errorReporter from './helpers/error-reporter';
+import eslintCacheKey from './helpers/eslint-cache-key';
+import cacheStore from './configs/cache';
+import revManifests from './configs/rev-manifests';
+import paths from './configs/paths';
+import browserSyncConfig from './configs/browser-sync';<% if (gulpTasks.includes('offline')) { %>
+import offlineConfig from './configs/offline';<% } %>
+import * as webpackConfig from './configs/webpack';
+import { server } from './server';
 
 revManifests.push(
 	'script-rev-manifest'
@@ -39,15 +39,17 @@ gulp.task('script:watch', (done) => {
 	done();
 });
 
+const eslintCacheConfig = {
+	name:      'eslint',
+	fileCache: cacheStore,
+	key:       eslintCacheKey,
+	success:   file => !file.eslint.messages.length,
+	value:     file => ({ eslint: file.eslint })
+};
+
 gulp.task('script:lint', () =>
 	gulp.src(scriptsFiles)
-		.pipe(cache(esLint(), {
-			name:      'eslint',
-			fileCache: cacheStore,
-			key:       eslintCacheKey,
-			success:   file => !file.eslint.messages.length,
-			value:     file => ({ eslint: file.eslint })
-		}))
+		.pipe(cache(esLint(), eslintCacheConfig))
 		.pipe(esLint.format())
 		.pipe(esLint.failAfterError())
 		.on('error', errorReporter)

@@ -2,10 +2,9 @@
  * Webpack svg loader.
  */
 
-import update    from 'immutability-helper';
-import path      from 'path';
+import path from 'path';
+import update from 'immutability-helper';
 import findIndex from '../../helpers/find-index';
-import paths     from '../paths';
 
 const cwd = process.cwd();
 
@@ -19,7 +18,7 @@ export function base(config) {
 					options: {
 						runtimeGenerator: path.join(cwd, 'tasks/helpers/svg-to-component.js'),
 						runtimeOptions:   {
-							iconModule: path.join(cwd, paths.src.app, 'tasks/helpers/icon-component.js')
+							iconModule: path.join(cwd, 'tasks/helpers/icon-component.js')
 						}
 					}
 				}]
@@ -41,6 +40,6 @@ export function build(config) {
 			[findIndex('test', '/\\.svg$/', rules)]: {
 				use: { $push: ['svgo-loader'] }
 			}
-		}}
+		} }
 	});
 }

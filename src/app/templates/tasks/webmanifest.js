@@ -1,19 +1,19 @@
 /**
- * Web manifest tasks
+ * Web manifest tasks.
  */
 
-import gulp          from 'gulp';
+import gulp from 'gulp';
 import * as teleport from 'gulp-teleport';
-import rev           from 'gulp-rev';
-import revFormat     from 'gulp-rev-format';
-import revReplace    from 'gulp-rev-replace';
-import newer         from 'gulp-newer';
-import size          from 'gulp-size';<% if (gulpTasks.includes('favicon')) { %>
-import json          from 'gulp-json-editor';<% } %>
-import notify        from './helpers/notify';
-import revManifests  from './configs/rev-manifests';
-import paths         from './configs/paths';
-import { server }    from './server';
+import rev from 'gulp-rev';
+import revFormat from 'gulp-rev-format';
+import revReplace from 'gulp-rev-replace';
+import newer from 'gulp-newer';
+import size from 'gulp-size';<% if (gulpTasks.includes('favicon')) { %>
+import json from 'gulp-json-editor';<% } %>
+import notify from './helpers/notify';
+import revManifests from './configs/rev-manifests';
+import paths from './configs/paths';
+import { server } from './server';
 
 revManifests.push(
 	'webmanifest-rev-manifest'
@@ -55,7 +55,7 @@ gulp.task('webmanifest:build', () =>
 		.pipe(teleport.wait('webmanifest'))
 		.pipe(setIcons())
 		.pipe(revReplace({
-			manifest:            teleport.waitStream('favicons-rev-manifest'),
+			manifest:            teleport.waitStream('favicons-rev-manifest', false, 240000),
 			replaceInExtensions: ['.json']
 		}))
 		.pipe(rev())

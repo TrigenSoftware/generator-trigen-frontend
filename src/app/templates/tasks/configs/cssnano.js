@@ -1,5 +1,5 @@
 /**
- * cssnano config 
+ * cssnano config.
  */
 
 export default {

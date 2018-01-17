@@ -1,5 +1,5 @@
 /**
- * Paths
+ * Paths.
  */
 <% if (gulpTasks.includes('webmanifest')) { %>
 export default {

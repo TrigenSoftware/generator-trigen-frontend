@@ -1,5 +1,5 @@
 /**
- * Favicons config
+ * Favicons config.
  */
 <% if (gulpTasks.includes('webmanifest')) { %>
 import manifest from '../../src/manifest.json';

@@ -1,31 +1,31 @@
 /**
- * Style tasks
+ * Style tasks.
  */
 <% if (webpackLoaders.includes('sass')) { %>
-import gulp                from 'gulp';
-import styleLint           from 'gulp-stylelint';
-import errorReporter       from './helpers/error-reporter';
-import paths               from './configs/paths';
+import gulp from 'gulp';
+import styleLint from 'gulp-stylelint';
+import errorReporter from './helpers/error-reporter';
+import paths from './configs/paths';
 <% } else { %>
-import gulp                from 'gulp';
-import * as teleport       from 'gulp-teleport';
-import rev                 from 'gulp-rev';
-import revFormat           from 'gulp-rev-format';
-import revReplace          from 'gulp-rev-replace';
-import size                from 'gulp-size';
+import gulp from 'gulp';
+import * as teleport from 'gulp-teleport';
+import rev from 'gulp-rev';
+import revFormat from 'gulp-rev-format';
+import revReplace from 'gulp-rev-replace';
+import size from 'gulp-size';
 import sassModulesImporter from 'sass-modules-importer';
-import sass                from 'gulp-sass';
-import sourcemaps          from 'gulp-sourcemaps';
-import cssnano             from 'gulp-cssnano';
-import autoprefixer        from 'gulp-autoprefixer';
-import styleLint           from 'gulp-stylelint';
-import errorReporter       from './helpers/error-reporter';
-import notify              from './helpers/notify';
-import revManifests        from './configs/rev-manifests';
-import paths               from './configs/paths';
-import autoprefixerConfig  from './configs/autoprefixer';
-import cssnanoConfig       from './configs/cssnano';
-import { server }          from './server';
+import sass from 'gulp-sass';
+import sourcemaps from 'gulp-sourcemaps';
+import cssnano from 'gulp-cssnano';
+import autoprefixer from 'gulp-autoprefixer';
+import styleLint from 'gulp-stylelint';
+import errorReporter from './helpers/error-reporter';
+import notify from './helpers/notify';
+import revManifests from './configs/rev-manifests';
+import paths from './configs/paths';
+import autoprefixerConfig from './configs/autoprefixer';
+import cssnanoConfig from './configs/cssnano';
+import { server } from './server';
 
 revManifests.push(
 	'style-rev-manifest'

@@ -3,12 +3,12 @@
  */
 
 import WebpackExtractTextPlugin from 'extract-text-webpack-plugin';
-import autoprefixer             from 'autoprefixer';
-import cssnano                  from 'cssnano';
-import update                   from 'immutability-helper';
-import autoprefixerConfig       from '../autoprefixer';
-import cssnanoConfig            from '../cssnano';
-import findIndex                from '../../helpers/find-index';
+import autoprefixer from 'autoprefixer';
+import cssnano from 'cssnano';
+import update from 'immutability-helper';
+import autoprefixerConfig from '../autoprefixer';
+import cssnanoConfig from '../cssnano';
+import findIndex from '../../helpers/find-index';
 
 export function base(config) {
 	return update(config, {
@@ -50,7 +50,7 @@ export function base(config) {
 					loader:  'css-loader',
 					options: {}
 				}, {
-					loader: 'postcss-loader',
+					loader:  'postcss-loader',
 					options: {
 						sourceMap: true
 					}
@@ -96,7 +96,7 @@ export function build(config) {
 	return update(config, {
 		module:  { rules: {
 			[findIndex('test', '/\\.scss$/', rules)]: {
-				use: { $apply: (use) =>
+				use: { $apply: use =>
 					extractSass.extract({
 						use: update(use.splice(1), {
 							1: { options: { plugins: { $set: () => [
@@ -108,17 +108,17 @@ export function build(config) {
 				}
 			},
 			[findIndex('test', '/\\.css$/', rules)]: {
-				use: { $apply: (use) =>
+				use: { $apply: use =>
 					extractSass.extract({
 						use: update(use.splice(1), {
 							1: { options: { plugins: { $set: () => [
 								cssnano(cssnanoConfig)
-							] } } },
+							] } } }
 						})
 					})
 				}
 			}
-		}},
+		} },
 		plugins: { $push: [extractSass] }
 	});
 }

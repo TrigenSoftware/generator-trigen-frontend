@@ -2,8 +2,8 @@
  * Glob helpers.
  */
 
-import glob     from 'glob';
 import { join } from 'path';
+import glob from 'glob';
 
 export function joinBase(base, patterns) {
 	return patterns.map((pattern) => {
@@ -43,6 +43,6 @@ export function ls(pattern) {
 			}
 
 			resolve(files);
-		})
+		});
 	});
 }

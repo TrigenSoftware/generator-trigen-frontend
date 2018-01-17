@@ -1,5 +1,5 @@
 /**
- * htmlmin config
+ * htmlmin config.
  */
 
 export default {

@@ -28,4 +28,4 @@ export default function errorReporter(error) {
 
 	process.exitCode = 1;
 	this.emit('end');
-};
+}

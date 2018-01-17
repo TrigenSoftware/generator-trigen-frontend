@@ -1,5 +1,5 @@
 /**
- * BrowserSync config
+ * BrowserSync config.
  */
 
 export default {

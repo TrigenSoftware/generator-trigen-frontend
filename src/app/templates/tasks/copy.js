@@ -1,8 +1,8 @@
 /**
- * Copy tasks
+ * Copy tasks.
  */
 
-import gulp  from 'gulp';
+import gulp from 'gulp';
 import paths from './configs/paths';
 
 gulp.task('copy:dev', () =>

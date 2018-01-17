@@ -1,6 +1,10 @@
+/**
+ * ESLint cache key generator.
+ */
+
+import fs from 'fs';
 import glob from 'glob';
-import fs   from 'fs';
-import pkg  from '../../package.json';
+import pkg from '../../package.json';
 
 const versions = Object.entries(pkg.devDependencies).reduce((versions, [dep, ver]) => {
 
@@ -15,10 +19,10 @@ const versions = Object.entries(pkg.devDependencies).reduce((versions, [dep, ver
 const configs = [
 	...glob.sync('.eslintrc*'),
 	...glob.sync('src/**/.eslintrc*')
-].map((path) =>
-	fs.readFileSync(path, 'utf8')
+].map(path =>
+	fs.readFileSync(path, 'utf8') // eslint-disable-line no-sync
 ).join('');
 
 export default function eslintCacheKey(file) {
-	return `${versions}${configs}${file.contents.toString('base64')}`
+	return `${versions}${configs}${file.contents.toString('base64')}`;
 }

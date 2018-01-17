@@ -2,12 +2,12 @@
  * Gulpfile.babel.js with tasks for frontend development.
  */
 
-import gulp   from 'gulp';
+import path from 'path';
+import gulp from 'gulp';
 import dotenv from 'dotenv';
-import del    from 'del';
-import path   from 'path';
-import cache  from './tasks/configs/cache';
-import paths  from './tasks/configs/paths';
+import del from 'del';
+import cache from './tasks/configs/cache';
+import paths from './tasks/configs/paths';
 import './tasks/server';
 import './tasks/copy';
 import './tasks/html';<% if (gulpTasks.includes('favicon')) { %>

@@ -2,8 +2,8 @@
  * Webpack ServiceWorker loader.
  */
 
-import update    from 'immutability-helper';
-import path      from 'path';
+import path from 'path';
+import update from 'immutability-helper';
 import findIndex from '../../helpers/find-index';
 
 const cwd = process.cwd();

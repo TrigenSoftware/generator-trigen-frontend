@@ -1,24 +1,24 @@
 /**
- * HTML tasks
+ * HTML tasks.
  */
 
-import gulp           from 'gulp';
-import * as teleport  from 'gulp-teleport';
-import revReplace     from 'gulp-rev-replace';
-import newer          from 'gulp-newer';
-import size           from 'gulp-size';<% if (gulpTasks.includes('favicon') || projectType != 'simple') { %>
-import replace        from 'gulp-replace';<% } %>
-import merge          from 'gulp-merge-json';
-import twig           from 'gulp-twig';
+import gulp from 'gulp';
+import * as teleport from 'gulp-teleport';
+import revReplace from 'gulp-rev-replace';
+import newer from 'gulp-newer';
+import size from 'gulp-size';<% if (gulpTasks.includes('favicon') || projectType != 'simple') { %>
+import replace from 'gulp-replace';<% } %>
+import merge from 'gulp-merge-json';
+import twig from 'gulp-twig';
 import progressiveCss from 'gulp-progressive-css';
-import htmlmin        from 'gulp-htmlmin';
-import htmlLint       from 'gulp-html-linter';
-import notify         from './helpers/notify';
-import errorReporter  from './helpers/error-reporter';
-import revManifests   from './configs/rev-manifests';
-import paths          from './configs/paths';
-import htmlminConfig  from './configs/htmlmin';
-import { server }     from './server';
+import htmlmin from 'gulp-htmlmin';
+import htmlLint from 'gulp-html-linter';
+import notify from './helpers/notify';
+import errorReporter from './helpers/error-reporter';
+import revManifests from './configs/rev-manifests';
+import paths from './configs/paths';
+import htmlminConfig from './configs/htmlmin';
+import { server } from './server';
 <% if (gulpTasks.includes('favicon')) { %>
 function replaceFavicon() {
 	return replace(

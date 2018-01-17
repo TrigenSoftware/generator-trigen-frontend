@@ -19,25 +19,24 @@ function printWebpackReducers(env) {
 }
 
 %>
-import webpack                    from 'webpack';
-import WebpackBabelMinifyPlugin   from 'babel-minify-webpack-plugin';
-import WebpackManifestPlugin      from 'webpack-manifest-plugin';
+import path from 'path';
+import webpack from 'webpack';
+import WebpackBabelMinifyPlugin from 'babel-minify-webpack-plugin';
+import WebpackManifestPlugin from 'webpack-manifest-plugin';
 import WebpackChunkManifsetPlugin from 'chunk-manifest-webpack-plugin';
-import update                     from 'immutability-helper';
-import path                       from 'path';
-import { decamelize }             from 'humps';
-import findIndex                  from '../../helpers/find-index';<% if (webpackLoadersExist) { %>
-import applyReducers              from '../../helpers/apply-reducers';<% } %>
-import pkg                        from '../../../package.json';<% if (webpackLoaders.includes('sass')) { %>
-import * as sassLoader            from './sass-loader';<% } %><% if (webpackLoaders.includes('svg')) { %>
-import * as svgLoader             from './svg-loader';<% } %><% if (webpackLoaders.includes('sw')) { %>
-import * as swLoader              from './sw-loader';<% } %>
+import update from 'immutability-helper';
+import { decamelize } from 'humps';
+import findIndex from '../../helpers/find-index';<% if (webpackLoadersExist) { %>
+import applyReducers from '../../helpers/apply-reducers';<% } %>
+import pkg from '../../../package.json';<% if (webpackLoaders.includes('sass')) { %>
+import * as sassLoader from './sass-loader';<% } %><% if (webpackLoaders.includes('svg')) { %>
+import * as svgLoader from './svg-loader';<% } %><% if (webpackLoaders.includes('sw')) { %>
+import * as swLoader from './sw-loader';<% } %>
 
 const cwd = process.cwd();
 
 function defaultParams(params) {
 	return {
-		buildRoot:  params.outputPath,
 		publicPath: '/',
 		envify:     {},
 		...params
@@ -50,8 +49,8 @@ function base(inputParams) {
 
 	const {
 		appRoot, entries,
-		buildRoot, outputPath,
-		publicPath, envify
+		outputPath, publicPath,
+		envify
 	} = params;
 
 	const { babel } = pkg;

@@ -1,20 +1,20 @@
 /**
- * Images tasks
+ * Images tasks.
  */
 
-import gulp          from 'gulp';
+import gulp from 'gulp';
 import * as teleport from 'gulp-teleport';
-import rev           from 'gulp-rev';
-import revFormat     from 'gulp-rev-format';
-import newer         from 'gulp-newer';
-import cache         from 'gulp-cache';
-import size          from 'gulp-size';
-import srcset        from 'gulp-srcset';
-import notify        from './helpers/notify';
-import cacheStore    from './configs/cache';
-import revManifests  from './configs/rev-manifests';
-import paths         from './configs/paths';
-import { server }    from './server';
+import rev from 'gulp-rev';
+import revFormat from 'gulp-rev-format';
+import newer from 'gulp-newer';
+import cache from 'gulp-cache';
+import size from 'gulp-size';
+import srcset from 'gulp-srcset';
+import notify from './helpers/notify';
+import cacheStore from './configs/cache';
+import revManifests from './configs/rev-manifests';
+import paths from './configs/paths';
+import { server } from './server';
 
 revManifests.push(
 	'images-rev-manifest'

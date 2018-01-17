@@ -1,5 +1,5 @@
 /**
- * rev-manifests store
+ * rev-manifests store.
  */
 
 export default [];
