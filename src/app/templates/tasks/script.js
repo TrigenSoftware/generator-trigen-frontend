@@ -28,11 +28,9 @@ revManifests.push(
 	'script-rev-manifest'
 );
 
-const scriptsFiles = path.join(paths.src.app, '**/*.js');
-
 gulp.task('script:watch', (done) => {
 	gulp.watch(
-		scriptsFiles,
+		paths.src.scripts,
 		{ delay: 1000 },
 		gulp.series('script:lint')
 	);
@@ -48,7 +46,7 @@ const eslintCacheConfig = {
 };
 
 gulp.task('script:lint', () =>
-	gulp.src(scriptsFiles)
+	gulp.src(paths.src.scripts)
 		.pipe(cache(esLint(), eslintCacheConfig))
 		.pipe(esLint.format())
 		.pipe(esLint.failAfterError())
@@ -60,11 +58,11 @@ gulp.task('script:dev', (done) => {
 	const { src, dev } = paths;
 
 	const webpackDevCompiler = webpack(webpackConfig.dev({
-		appRoot:    src.app,
-		entries:    src.scripts,
-		buildRoot:  dev.root,
-		outputPath: dev.app,
-		publicPath: path.join('/', dev.app.replace(dev.root, ''), '/'),
+		appRoot:    src.appDir,
+		entries:    src.appEntries,
+		buildRoot:  dev.rootDir,
+		outputPath: dev.appDir,
+		publicPath: path.join('/', dev.appDir.replace(dev.rootDir, ''), '/'),
 		envify:     {<% if (gulpTasks.includes('offline')) { %>
 			...offlineConfig
 		<% } %>}
@@ -96,7 +94,7 @@ gulp.task('script:dev', (done) => {
 
 	const browserSyncWebpackOptionsDev = {
 		...browserSyncConfig,
-		server: paths.dev.root,
+		server: paths.dev.rootDir,
 		files:  ['**/*.!js'],
 		middleware
 	};
@@ -110,11 +108,11 @@ gulp.task('script:build', gulp.series('script:lint', (done) => {
 	const { src, build } = paths;
 
 	const webpackBuildCompiler = webpack(webpackConfig.build({
-		appRoot:    src.app,
-		entries:    src.scripts,
-		buildRoot:  build.root,
-		outputPath: build.app,
-		publicPath: path.join('/', build.app.replace(build.root, ''), '/'),
+		appRoot:    src.appDir,
+		entries:    src.appEntries,
+		buildRoot:  build.rootDir,
+		outputPath: build.appDir,
+		publicPath: path.join('/', build.appDir.replace(build.rootDir, ''), '/'),
 		envify:     {<% if (gulpTasks.includes('offline')) { %>
 			...offlineConfig
 		<% } %>}

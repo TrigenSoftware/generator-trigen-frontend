@@ -56,7 +56,7 @@ export function base(config) {
 					}
 				}]
 			}, {
-				test:    /\.(eot|woff|ttf|jpg|webp|png|svg|gif)$/,
+				test:    /\.(eot|woff|ttf|jpg|webp|png<% if (!webpackLoaders.includes('svg')) { %>|svg<% } %>|gif)$/,
 				loader:  'file-loader',
 				options: {
 					name: '[name].[hash:10].[ext]'

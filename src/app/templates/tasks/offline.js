@@ -13,9 +13,9 @@ import offlineConfig from './configs/offline';
 <% if (gulpTasks.includes('offlineManifest')) { %>
 gulp.task('offline:manifest', () =>
 	gulp.src(glob.joinBase(
-		paths.build.root,
+		paths.build.rootDir,
 		offlineConfig.staticFiles
-	), { base: paths.build.root })
+	), { base: paths.build.rootDir })
 		.pipe(manifest({
 			hash:         true,
 			preferOnline: false,
@@ -23,12 +23,12 @@ gulp.task('offline:manifest', () =>
 			exclude:      'manifest.appcache',
 			fallback:     `. ${offlineConfig.navigateFallback}`
 		}))
-		.pipe(gulp.dest(paths.build.root))
+		.pipe(gulp.dest(paths.build.rootDir))
 		.pipe(notify('App cache manifest is generated.'))
 );
 <% } %>
 gulp.task('offline:sw', () =>
-	glob.ls(path.join(paths.build.root, '**/sw.*.js')).then((files) => {
+	glob.ls(path.join(paths.build.rootDir, '**/sw.*.js')).then((files) => {
 
 		const [globPatterns, globIgnores] = glob.splitYesNot(offlineConfig.staticFiles);
 
@@ -36,7 +36,7 @@ gulp.task('offline:sw', () =>
 			workbox.injectManifest({
 				swSrc:                     file,
 				swDest:                    file,
-				globDirectory:             paths.build.root,
+				globDirectory:             paths.build.rootDir,
 				dontCacheBustUrlsMatching: /\.[a-z0-9]{10}\./,
 				globPatterns,
 				globIgnores

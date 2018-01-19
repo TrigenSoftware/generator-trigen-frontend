@@ -13,7 +13,7 @@ gulp.task('server:dev', (done) => {
 
 	const browserSyncConfigDev = {
 		...browserSyncConfig,
-		server: paths.dev.root
+		server: paths.dev.rootDir
 	};
 
 	server.init(browserSyncConfigDev);
@@ -24,7 +24,7 @@ gulp.task('server:build', (done) => {
 
 	const browserSyncConfigBuild = {
 		...browserSyncConfig,
-		server: paths.build.root
+		server: paths.build.rootDir
 	};
 
 	server.init(browserSyncConfigBuild);

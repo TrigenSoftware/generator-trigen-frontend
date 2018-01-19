@@ -52,7 +52,7 @@ gulp.task('favicon:dev', () =>
 		}], {
 			skipOptimization: true
 		}))
-		.pipe(gulp.dest(paths.dev.favicons))
+		.pipe(gulp.dest(paths.dev.faviconsDev))
 		.pipe(notify('Favicons are updated.'))
 		.pipe(server.stream({ once: true }))
 );
@@ -77,7 +77,7 @@ gulp.task('favicon:build', () =>
 		.pipe(rev())
 		.pipe(revFormat({ prefix: '.' }))
 		.pipe(size({ title: 'favicons optimized' }))
-		.pipe(gulp.dest(paths.build.favicons))
+		.pipe(gulp.dest(paths.build.faviconsDev))
 		.pipe(rev.manifest())
 		.pipe(notify('Favicons are generated.'))
 		.pipe(teleport.to('favicons-rev-manifest'))

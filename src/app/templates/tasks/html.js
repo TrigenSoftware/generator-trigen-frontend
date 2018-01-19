@@ -59,13 +59,13 @@ gulp.task('html:lint', () =>
 
 gulp.task('html:dev', gulp.parallel('html:lint', () =>
 	gulp.src(paths.src.html)
-		.pipe(newer(paths.dev.root))
+		.pipe(newer(paths.dev.rootDir))
 		.pipe(twig({
 			data: { ...process.env }
 		}))<% if (gulpTasks.includes('favicon')) { %>
 		.pipe(teleport.wait('favicons'))
 		.pipe(replaceFavicon())<% } %>
-		.pipe(gulp.dest(paths.dev.root))
+		.pipe(gulp.dest(paths.dev.rootDir))
 		.pipe(notify('HTML files are updated.'))
 		.pipe(server.stream({ once: true }))
 ));
@@ -82,7 +82,7 @@ gulp.task('html:build', gulp.series('html:lint', () =>
 				.pipe(merge({ fileName: 'rev-manifest.json' }))
 				.pipe(teleport.clone('rev-manifest'))
 		}))
-		.pipe(progressiveCss({ base: paths.build.root }))<% if (projectType != 'simple') { %>
+		.pipe(progressiveCss({ base: paths.build.rootDir }))<% if (projectType != 'simple') { %>
 		.pipe(teleport.wait(['webpack-manifest', 'webpack-loader']))
 		.pipe(injectWebpackLoader())<% } %>
 		.pipe(size({ title: 'html' }))
@@ -90,6 +90,6 @@ gulp.task('html:build', gulp.series('html:lint', () =>
 		.on('error', errorReporter)
 		.pipe(size({ title: 'html optimized' }))
 		.pipe(teleport.from('rev-manifest'))
-		.pipe(gulp.dest(paths.build.root))
+		.pipe(gulp.dest(paths.build.rootDir))
 		.pipe(notify('HTML files are compiled.'))
 ));

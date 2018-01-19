@@ -42,10 +42,10 @@ gulp.task('webmanifest:watch', (done) => {
 <% if (gulpTasks.includes('favicon')) { %>
 gulp.task('webmanifest:dev', () =>
 	gulp.src(paths.src.manifest)
-		.pipe(newer(paths.dev.root))
+		.pipe(newer(paths.dev.rootDir))
 		.pipe(teleport.wait('webmanifest'))
 		.pipe(setIcons())
-		.pipe(gulp.dest(paths.dev.root))
+		.pipe(gulp.dest(paths.dev.rootDir))
 		.pipe(notify('Web manifset is updated.'))
 		.pipe(server.stream({ once: true }))
 );
@@ -61,15 +61,15 @@ gulp.task('webmanifest:build', () =>
 		.pipe(rev())
 		.pipe(revFormat({ prefix: '.' }))
 		.pipe(size({ title: 'webmanifest' }))
-		.pipe(gulp.dest(paths.build.root))
+		.pipe(gulp.dest(paths.build.rootDir))
 		.pipe(rev.manifest())
 		.pipe(notify('Web manifset is compiled.'))
 		.pipe(teleport.to('webmanifest-rev-manifest'))
 );<% } else { %>
 gulp.task('webmanifest:dev', () =>
 	gulp.src(paths.src.manifest)
-		.pipe(newer(paths.dev.root))
-		.pipe(gulp.dest(paths.dev.root))
+		.pipe(newer(paths.dev.rootDir))
+		.pipe(gulp.dest(paths.dev.rootDir))
 		.pipe(notify('Web manifset is updated.'))
 		.pipe(server.stream({ once: true }))
 );
@@ -79,7 +79,7 @@ gulp.task('webmanifest:build', () =>
 		.pipe(rev())
 		.pipe(revFormat({ prefix: '.' }))
 		.pipe(size({ title: 'webmanifest' }))
-		.pipe(gulp.dest(paths.build.root))
+		.pipe(gulp.dest(paths.build.rootDir))
 		.pipe(rev.manifest())
 		.pipe(notify('Web manifset is compiled.'))
 		.pipe(teleport.to('webmanifest-rev-manifest'))
