@@ -26,7 +26,7 @@ gulp.task('cache:clear', done =>
 
 gulp.task('clear', () =>
 	del([
-		path.join(paths.build.root, '**/*')
+		path.join(paths.build.rootDir, '**/*')
 	])
 );
 
