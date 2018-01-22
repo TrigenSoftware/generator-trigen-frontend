@@ -32,15 +32,15 @@ function replaceFavicon() {
 <% } %><% if (projectType != 'simple') { %>
 function injectWebpackLoader() {
 	return replace(
-		/<script/,
-		() => `<script>window.webpackManifest=${
+		/(<script\s+defer\s+src=('|"|)app\/main\.js('|"|)s*[^>]+>)/,
+		script => `<script>window.webpackManifest=${
 			[
 				...teleport.get('webpack-manifest'),
 				...teleport.get('webpack-loader')
 			]
 				.map(_ => _.contents.toString('utf8'))
 				.join(';')
-		}</script><script`
+		}</script><script defer src="app/vendor.js"></script>${script}`
 	);
 }
 <% } %>
@@ -74,7 +74,9 @@ gulp.task('html:build', gulp.series('html:lint', () =>
 	gulp.src(paths.src.html)
 		.pipe(twig({
 			data: { ...process.env }
-		}))<% if (gulpTasks.includes('favicon')) { %>
+		}))<% if (projectType != 'simple') { %>
+		.pipe(teleport.wait(['webpack-manifest', 'webpack-loader']))
+		.pipe(injectWebpackLoader())<% } %><% if (gulpTasks.includes('favicon')) { %>
 		.pipe(teleport.wait('favicons'))
 		.pipe(replaceFavicon())<% } %>
 		.pipe(revReplace({
@@ -82,9 +84,7 @@ gulp.task('html:build', gulp.series('html:lint', () =>
 				.pipe(merge({ fileName: 'rev-manifest.json' }))
 				.pipe(teleport.clone('rev-manifest'))
 		}))
-		.pipe(progressiveCss({ base: paths.build.rootDir }))<% if (projectType != 'simple') { %>
-		.pipe(teleport.wait(['webpack-manifest', 'webpack-loader']))
-		.pipe(injectWebpackLoader())<% } %>
+		.pipe(progressiveCss({ base: paths.build.rootDir }))
 		.pipe(size({ title: 'html' }))
 		.pipe(htmlmin(htmlminConfig))
 		.on('error', errorReporter)

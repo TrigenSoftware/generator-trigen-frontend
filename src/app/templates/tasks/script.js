@@ -62,10 +62,8 @@ gulp.task('script:dev', (done) => {
 		entries:    src.appEntries,
 		buildRoot:  dev.rootDir,
 		outputPath: dev.appDir,
-		publicPath: path.join('/', dev.appDir.replace(dev.rootDir, ''), '/'),
-		envify:     {<% if (gulpTasks.includes('offline')) { %>
-			...offlineConfig
-		<% } %>}
+		publicPath: path.join('/', dev.appDir.replace(dev.rootDir, ''), '/')<% if (gulpTasks.includes('offline')) { %>,
+		envify:     { ...offlineConfig }<% } %>
 	}));
 
 	webpackDevCompiler.plugin('done', () => {
@@ -112,10 +110,8 @@ gulp.task('script:build', gulp.series('script:lint', (done) => {
 		entries:    src.appEntries,
 		buildRoot:  build.rootDir,
 		outputPath: build.appDir,
-		publicPath: path.join('/', build.appDir.replace(build.rootDir, ''), '/'),
-		envify:     {<% if (gulpTasks.includes('offline')) { %>
-			...offlineConfig
-		<% } %>}
+		publicPath: path.join('/', build.appDir.replace(build.rootDir, ''), '/')<% if (gulpTasks.includes('offline')) { %>,
+		envify:     { ...offlineConfig }<% } %>
 	}));
 
 	webpackBuildCompiler.outputFileSystem = new TeleportFs((stream) => {

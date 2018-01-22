@@ -55,7 +55,7 @@ gulp.task('webmanifest:build', () =>
 		.pipe(teleport.wait('webmanifest'))
 		.pipe(setIcons())
 		.pipe(revReplace({
-			manifest:            teleport.waitStream('favicons-rev-manifest', false, 240000),
+			manifest:            teleport.waitStream('favicons-rev-manifest', false, 600000),
 			replaceInExtensions: ['.json']
 		}))
 		.pipe(rev())

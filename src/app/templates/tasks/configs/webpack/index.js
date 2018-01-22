@@ -171,6 +171,17 @@ export function build(inputParams) {
 			}),
 			new WebpackBabelMinifyPlugin(),
 			new webpack.optimize.CommonsChunkPlugin({
+				name: 'vendor',
+				minChunks(module) {
+
+					if (module.resource && !/\.js$/.test(module.resource)) {
+						return false;
+					}
+
+					return module.context && module.context.includes('node_modules');
+				}
+			}),
+			new webpack.optimize.CommonsChunkPlugin({
 				name:      'main',
 				children:  true,
 				async:     true,
