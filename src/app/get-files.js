@@ -14,8 +14,8 @@ const common = [
 export default function getFiles(projectType, templatePath, {
 	license, src,
 	favicon, webmanifest,
-	sassLoader, svgLoader,
-	offline
+	offline, storybook,
+	sassLoader, svgLoader
 }) {
 
 	const files = [],
@@ -72,6 +72,13 @@ export default function getFiles(projectType, templatePath, {
 
 	if (!webmanifest) {
 		tasks.push(`!${templatePath('tasks/webmanifest.js')}`);
+	}
+
+	if (!storybook) {
+		tasks.push(`!${templatePath('tasks/storybook.js')}`);
+		tasks.push(`!${templatePath('tasks/helpers/print.js')}`);
+	} else {
+		files.push(['copy', './.storybook', templatePath('.storybook/**/*')]);
 	}
 
 	if (projectType == 'simple') {

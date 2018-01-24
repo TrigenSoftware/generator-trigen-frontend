@@ -5,6 +5,7 @@ import yosay from 'yosay';
 import { hasYarnOrNpm, gitInit } from './helpers';
 import prompts from './prompts';
 import editPackageJson from './edit-package-json';
+import managePackageScripts from './manage-package-scripts';
 import managePackageDeps from './manage-package-deps';
 import editWebmanifest from './edit-webmanifest';
 import getFiles from './get-files';
@@ -91,15 +92,18 @@ export default class GeneratorTrigenFrontend extends Generator {
 		const targetPkg = this._readTargetPackage(),
 			{ props, pkg } = this;
 
-		this.pkg = managePackageDeps(
-			editPackageJson(pkg, targetPkg, props.pkg),
-			{
-				favicon:         props.gulpTasks.includes('favicon'),
-				offline:         props.gulpTasks.includes('offline'),
-				offlineManifest: props.gulpTasks.includes('offlineManifest'),
-				sassLoader:      props.webpackLoaders.includes('sass'),
-				svgLoader:       props.webpackLoaders.includes('svg')
-			}
+		const managerProps = {
+			favicon:         props.gulpTasks.includes('favicon'),
+			offline:         props.gulpTasks.includes('offline'),
+			offlineManifest: props.gulpTasks.includes('offlineManifest'),
+			storybook:       props.gulpTasks.includes('storybook'),
+			sassLoader:      props.webpackLoaders.includes('sass'),
+			svgLoader:       props.webpackLoaders.includes('svg')
+		};
+
+		this.pkg = [managePackageDeps, managePackageScripts].reduce(
+			(pkg, manage) => manage(pkg, managerProps),
+			editPackageJson(pkg, targetPkg, props.pkg)
 		);
 	}
 
@@ -150,6 +154,7 @@ export default class GeneratorTrigenFrontend extends Generator {
 			favicon:     props.gulpTasks.includes('favicon'),
 			webmanifest: props.gulpTasks.includes('webmanifest'),
 			offline:     props.gulpTasks.includes('offline'),
+			storybook:   props.gulpTasks.includes('storybook'),
 			sassLoader:  props.webpackLoaders.includes('sass'),
 			svgLoader:   props.webpackLoaders.includes('svg')
 		});

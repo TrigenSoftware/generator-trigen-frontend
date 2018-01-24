@@ -37,6 +37,17 @@ export default async function askForGulpCustomize(generator, props, pkg, webman)
 		});
 	}
 
+	if (props.projectType == 'reactjs') {
+		gulpCustomizePrompts[0].choices.push({
+			name:    'storybook - development environment for UI components',
+			value:   'storybook',
+			checked: getValue(
+				[props, 'gulpTasks', _ => _.includes('storybook')],
+				false
+			)
+		});
+	}
+
 	const result = await generator.prompt(gulpCustomizePrompts);
 
 	result.faviconBackground = false;

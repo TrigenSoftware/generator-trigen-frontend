@@ -71,3 +71,29 @@ export function gitInit(cwd) {
 		});
 	});
 }
+
+export function applyProps(opts, props) {
+	return Object.keys(opts).reduce((result, opt) => {
+
+		if (opt[0] == '#') {
+
+			const not = opt[1] == '!',
+				propKey = opt.replace(/[#!]/g, ''),
+				propVal = props[propKey];
+
+			if (not && !propVal || !not && propVal) {
+				return {
+					...result,
+					...opts[opt]
+				};
+			}
+
+			return result;
+		}
+
+		return {
+			...result,
+			[opt]: opts[opt]
+		};
+	}, {});
+}
