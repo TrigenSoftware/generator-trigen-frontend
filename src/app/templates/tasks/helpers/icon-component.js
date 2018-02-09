@@ -40,7 +40,7 @@ export default class Icon extends PureComponent {
 	getPathname() {
 
 		if (shoudlPrepandPathname) {
-			return location.pathname;
+			return `${location.pathname}${location.search}`;
 		}
 
 		return '';
