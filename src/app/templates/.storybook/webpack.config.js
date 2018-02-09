@@ -1,5 +1,4 @@
 require('babel-register');
-const path = require('path');
 const { dev } = require('../tasks/configs/webpack');
 const paths = require('../tasks/configs/paths').default;
 
