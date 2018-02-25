@@ -51,8 +51,8 @@
     "gulp-util": "^3.0.8",
     "htmllint-config-trigen": "^1.1.1",
     "sass-modules-importer": "^1.2.1",
-    "stylelint": "^8.4.0",
-    "stylelint-config-trigen": "^1.7.0",
+    "stylelint": "^9.1.1",
+    "stylelint-config-trigen": "^1.9.2",
     "#favicon": {
       "gulp-favicons": "^2.2.7",
       "gulp-json-editor": "^2.2.1"

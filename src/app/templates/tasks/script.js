@@ -13,6 +13,7 @@ import webpack from 'webpack';
 import WebpackDevMiddleware from 'webpack-dev-middleware';<% if (projectType == 'reactjs') { %>
 import WebpackHotMiddleware from 'webpack-hot-middleware';<% } %>
 import HttpProxyMiddleware from 'http-proxy-middleware';
+import HistoryApiFallbackMiddleware from 'connect-history-api-fallback';
 import notify from './helpers/notify';
 import errorReporter from './helpers/error-reporter';
 import eslintCacheKey from './helpers/eslint-cache-key';
@@ -89,6 +90,8 @@ gulp.task('script:dev', (done) => {
 	if (process.env.PROXY_API_URI) {
 		middleware.push(HttpProxyMiddleware(process.env.PROXY_API_URI));
 	}
+
+	middleware.push(HistoryApiFallbackMiddleware());
 
 	const browserSyncWebpackOptionsDev = {
 		...browserSyncConfig,
