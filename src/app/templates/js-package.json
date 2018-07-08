@@ -62,7 +62,7 @@
     "humps": "^2.0.1",
     "immutability-helper": "^2.1.1",
     "stylelint": "^9.1.1",
-    "stylelint-config-trigen": "^1.9.2",
+    "stylelint-config-trigen": "^1.9.3",
     "webpack": "^3.5.5",
     "webpack-dev-middleware": "^1.12.0",
     "webpack-hot-middleware": "^2.18.2",
