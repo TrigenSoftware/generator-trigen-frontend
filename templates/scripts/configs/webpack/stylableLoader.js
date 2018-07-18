@@ -1,10 +1,18 @@
 import StylablePlugin from 'stylable-webpack-plugin';
+import StylelintPlugin from 'stylelint-webpack-plugin';
 import postcss from 'postcss';
-import stylelint from 'stylelint';
-import postcssReporter from 'postcss-reporter';
 import autoprefixer from 'autoprefixer';
 import update from 'immutability-helper';
-import findIndex from '../../helpers/find-index';
+import findIndex from '../../helpers/findIndex';
+
+const autoprefixProcessor = postcss([
+	autoprefixer()
+]);
+
+function postProcessor(stylableResult) {
+	autoprefixProcessor.process(stylableResult.meta.outputAst).sync();
+	return stylableResult;
+}
 
 export function base(config) {
 	return update(config, {
@@ -22,48 +30,30 @@ export function base(config) {
 
 export function dev(config) {
 
-	const postProcessor = postcss([
-		stylelint(),
-		postcssReporter({ clearReportedMessages: true }),
-		autoprefixer()
-	]);
 	const stylablePlugin = new StylablePlugin({
 		rootScope:      false,
-		transformHooks: {
-			postProcessor(stylableResult) {
-				postProcessor.process(stylableResult.meta.outputAst).sync();
-				return stylableResult;
-			}
-		}
+		transformHooks: { postProcessor }
 	});
 
 	return update(config, {
-		plugins: { $push: [stylablePlugin] }
+		plugins: { $push: [
+			new StylelintPlugin({
+				files: '**/*.st.css'
+			}),
+			stylablePlugin
+		] }
 	});
 }
 
 export function build(config) {
 
-	const postProcessor = postcss([
-		stylelint(),
-		postcssReporter({
-			clearReportedMessages: true,
-			throwError:            true
-		}),
-		autoprefixer()
-	]);
 	const stylablePlugin = new StylablePlugin({
 		filename:       '[name].[chunkhash].css',
 		rootScope:      false,
 		outputCSS:      true,
 		includeCSSInJS: false,
-		transformHooks: {
-			postProcessor(stylableResult) {
-				postProcessor.process(stylableResult.meta.outputAst).sync();
-				return stylableResult;
-			}
-		},
-		optimize: {
+		transformHooks: { postProcessor },
+		optimize:       {
 			removeUnusedComponents:   true,
 			removeComments:           true,
 			removeStylableDirectives: true,
@@ -83,6 +73,12 @@ export function build(config) {
 				}
 			}
 		},
-		plugins: { $push: [stylablePlugin] }
+		plugins: { $push: [
+			new StylelintPlugin({
+				files:       '**/*.st.css',
+				failOnError: true
+			}),
+			stylablePlugin
+		] }
 	});
 }

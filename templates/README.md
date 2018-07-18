@@ -12,19 +12,19 @@ yarn start # or
 npm start
 ```
 
-Build sources for production:
+Build for production:
 
 ```bash
 yarn build # or
 npm run build
 ```
 
-Lint sources:
+Run tests:
 
 ```bash
 yarn test # or
 npm test
-```<% if (gulpTasks.includes('storybook')) { %>
+```
 
 Start storybook:
 
@@ -38,6 +38,6 @@ Build storybook:
 ```bash
 yarn build:storybook    # or
 npm run build:storybook # or
-```<% } %>
+```
 
 > This project generated with [generator-trigen-frontend](https://www.npmjs.com/package/generator-trigen-frontend)

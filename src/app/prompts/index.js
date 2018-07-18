@@ -1,14 +1,10 @@
-import askForProjectType from './project-type';
-import askForEditPackage from './edit-package';
-import askForGulpCustomize from './gulp-customize';
-import askForWebpackCustomize from './webpack-customize';
-import askForGitInit from './git-init';
+import askForEditPackage from './editPackage';
+import askForEditWebman from './editWebmanifest';
+import askForGitInit from './gitInit';
 
 const asks = [
-	askForProjectType,
 	askForEditPackage,
-	askForGulpCustomize,
-	askForWebpackCustomize,
+	askForEditWebman,
 	askForGitInit
 ];
 

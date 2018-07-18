@@ -20,24 +20,6 @@ export default function editPackageJson(sourcePkg, targetPkg, pkgProps) {
 		Reflect.deleteProperty(pkg, 'private');
 	}
 
-	if (pkg.babel && pkg.browsers && Array.isArray(pkg.babel.presets)) {
-		pkg.babel.presets.some((preset) => {
-
-			if (Array.isArray(preset) && preset[0] == 'env') {
-
-				const options = preset[1];
-
-				if (options && typeof options.targets != 'undefined') {
-					options.targets.browsers = pkg.browsers.split(',').map(_ => _.trim());
-				}
-
-				return true;
-			}
-
-			return false;
-		});
-	}
-
 	pkg.dependencies = targetPkg.dependencies;
 	pkg.devDependencies = targetPkg.devDependencies;
 

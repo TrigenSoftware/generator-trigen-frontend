@@ -10,9 +10,8 @@ export function getValue(...values) {
 		if (Array.isArray(value)) {
 
 			const [obj, ...keys] = value;
-
-			let tres = obj,
-				counter = 1;
+			let tres = obj;
+			let counter = 1;
 
 			keys.some((key) => {
 
@@ -77,9 +76,9 @@ export function applyProps(opts, props) {
 
 		if (opt[0] == '#') {
 
-			const not = opt[1] == '!',
-				propKey = opt.replace(/[#!]/g, ''),
-				propVal = props[propKey];
+			const not = opt[1] == '!';
+			const propKey = opt.replace(/[#!]/g, '');
+			const propVal = props[propKey];
 
 			if (not && !propVal || !not && propVal) {
 				return {

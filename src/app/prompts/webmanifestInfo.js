@@ -1,13 +1,17 @@
 import path from 'path';
 import { getValue } from '../helpers';
 
+const dir = [
+	'auto',
+	'ltr',
+	'rtl'
+];
 const display = [
 	'fullscreen',
 	'standalone',
 	'minimal-ui',
 	'browser'
 ];
-
 const orientation = [
 	'any',
 	'natural',
@@ -18,13 +22,13 @@ const orientation = [
 	'portrait-primary',
 	'portrait-secondary'
 ];
-
 const defaultOrientation = 5;
 
 export default async function askForWebmanInfo(generator, props, pkg, webman) {
 
-	const destinationRoot = generator.destinationRoot();
+	generator.log(`${webman ? 'Editing' : 'Creation'} of package.json:`);
 
+	const destinationRoot = generator.destinationRoot();
 	const webmanPrompts = [{
 		type:    'input',
 		name:    'name',
@@ -37,9 +41,7 @@ export default async function askForWebmanInfo(generator, props, pkg, webman) {
 			path.basename(destinationRoot)
 		)
 	}];
-
 	const result = await generator.prompt(webmanPrompts);
-
 	const webmanPrompts2 = [{
 		type:    'input',
 		name:    'short_name',
@@ -61,6 +63,16 @@ export default async function askForWebmanInfo(generator, props, pkg, webman) {
 			[props, 'webman', 'description'],
 			[props, 'pkg', 'description'],
 			[pkg, 'description']
+		)
+	}, {
+		type:    'list',
+		name:    'dir',
+		message: 'text directionality:',
+		choices: dir,
+		default: getValue(
+			[webman, 'dir', _ => dir.indexOf(_)],
+			[props, 'webman', 'dir', _ => dir.indexOf(_)],
+			0
 		)
 	}, {
 		type:    'input',

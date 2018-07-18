@@ -2,13 +2,14 @@ import fs from 'fs';
 import Generator from 'yeoman-generator';
 import chalk from 'chalk';
 import yosay from 'yosay';
-import { hasYarnOrNpm, gitInit } from './helpers';
+import {
+	hasYarnOrNpm,
+	gitInit
+} from './helpers';
 import prompts from './prompts';
-import editPackageJson from './edit-package-json';
-import managePackageScripts from './manage-package-scripts';
-import managePackageDeps from './manage-package-deps';
-import editWebmanifest from './edit-webmanifest';
-import getFiles from './get-files';
+import editPackageJson from './editPackageJson';
+import editWebmanifest from './editWebmanifest';
+import getFiles from './getFiles';
 
 export default class GeneratorTrigenFrontend extends Generator {
 
@@ -53,9 +54,9 @@ export default class GeneratorTrigenFrontend extends Generator {
 
 		this.log(yosay(`Welcome to the delightful ${chalk.green('trigen-frontend')} generator!`));
 
-		const { silent } = this.options,
-			pkgOrNot     = this._package(),
-			webmanOrNot  = this._webmanifest();
+		const { silent } = this.options;
+		const pkgOrNot = this._package();
+		const webmanOrNot = this._webmanifest();
 
 		if (pkgOrNot) {
 			this.pkg = pkgOrNot;
@@ -83,41 +84,30 @@ export default class GeneratorTrigenFrontend extends Generator {
 
 	_readTargetPackage() {
 		return this.fs.readJSON(
-			this.templatePath(`${this.props.projectType}-package.json`)
+			this.templatePath('package.json')
 		);
 	}
 
 	_editPackageJson() {
 
-		const targetPkg = this._readTargetPackage(),
-			{ props, pkg } = this;
+		const targetPkg = this._readTargetPackage();
+		const { pkg: pkgProps } = this.props;
+		const { pkg } = this;
 
-		const managerProps = {
-			favicon:         props.gulpTasks.includes('favicon'),
-			offline:         props.gulpTasks.includes('offline'),
-			offlineManifest: props.gulpTasks.includes('offlineManifest'),
-			storybook:       props.gulpTasks.includes('storybook'),
-			sassLoader:      props.webpackLoaders.includes('sass'),
-			svgLoader:       props.webpackLoaders.includes('svg')
-		};
-
-		this.pkg = [managePackageDeps, managePackageScripts].reduce(
-			(pkg, manage) => manage(pkg, managerProps),
-			editPackageJson(pkg, targetPkg, props.pkg)
-		);
+		this.pkg = editPackageJson(pkg, targetPkg, pkgProps);
 	}
 
 	_readTargetWebmanifest() {
 		return this.fs.readJSON(
-			this.templatePath('manifest.json')
+			this.templatePath('src/manifest.json')
 		);
 	}
 
 	_editWebmanifest() {
 
-		const targetWebman = this._readTargetWebmanifest(),
-			{ webman: webmanProps } = this.props,
-			{ webman } = this;
+		const targetWebman = this._readTargetWebmanifest();
+		const { webman: webmanProps } = this.props;
+		const { webman } = this;
 
 		this.webman = editWebmanifest(webman, targetWebman, webmanProps);
 	}
@@ -129,11 +119,17 @@ export default class GeneratorTrigenFrontend extends Generator {
 
 	writing() {
 
-		const { pkg, webman, props } = this,
-			{ pkg: pkgProps, webman: webmanProps } = props;
+		const {
+			pkg,
+			webman,
+			props
+		} = this;
+		const {
+			pkg: pkgProps,
+			webman: webmanProps
+		} = props;
 
 		if (pkgProps && pkg) {
-
 			this.fs.extendJSON(
 				this.destinationPath('package.json'),
 				pkg
@@ -141,49 +137,44 @@ export default class GeneratorTrigenFrontend extends Generator {
 		}
 
 		if (webmanProps && webman) {
-
 			this.fs.extendJSON(
 				this.destinationPath('src/manifest.json'),
 				webman
 			);
 		}
 
-		const files = getFiles(props.projectType, this.templatePath.bind(this), {
-			license:     pkgProps && pkgProps.license == 'MIT',
-			src:         !fs.existsSync(this.destinationPath('src')),
-			favicon:     props.gulpTasks.includes('favicon'),
-			webmanifest: props.gulpTasks.includes('webmanifest'),
-			offline:     props.gulpTasks.includes('offline'),
-			storybook:   props.gulpTasks.includes('storybook'),
-			sassLoader:  props.webpackLoaders.includes('sass'),
-			svgLoader:   props.webpackLoaders.includes('svg')
-		});
+		const files = getFiles({
+			license: pkgProps && pkgProps.license == 'MIT',
+			src:     !fs.existsSync(this.destinationPath('src'))
+		}, this.templatePath.bind(this));
 
-		files.forEach(([type, dir, files]) => {
+		files.forEach(([
+			isTemplate,
+			destDir,
+			files
+		]) => {
 
-			if (type == 'template') {
-				this.fs.copyTpl(files, this.destinationPath(dir), props);
+			if (isTemplate) {
+				this.fs.copyTpl(files, this.destinationPath(destDir), props);
 			} else {
-				this.fs.copy(files, this.destinationPath(dir));
+				this.fs.copy(files, this.destinationPath(destDir));
 			}
 		});
 	}
 
-	_gitInit() {
+	async _gitInit() {
 
 		if (this.props.gitInit) {
-			return gitInit(this.destinationRoot());
+			await gitInit(this.destinationRoot());
 		}
-
-		return null;
 	}
 
 	async install() {
 
 		await this._gitInit();
 
-		const pm = await hasYarnOrNpm(),
-			useYarn = pm != 'npm';
+		const pm = await hasYarnOrNpm();
+		const useYarn = pm != 'npm';
 
 		if (useYarn) {
 			this.yarnInstall();

@@ -1,3 +1,4 @@
+import globals from 'rollup-plugin-node-globals';
 import commonjs from 'rollup-plugin-commonjs';
 import resolve from 'rollup-plugin-node-resolve';
 import babel from 'rollup-plugin-babel';
@@ -13,26 +14,15 @@ const plugins = [
 	json({
 		preferConst: true
 	}),
-	babel(Object.assign({
-		runtimeHelpers: true,
-		babelrc:        false,
-		exclude:        'node_modules/**'
-	}, pkg.babel, {
-		presets: pkg.babel.presets.map((preset) => {
-
-			if (Array.isArray(preset) && preset[0] == 'env') {
-				preset[1].modules = false;
-			}
-
-			return preset;
-		})
-	})),
+	babel({
+		runtimeHelpers: true
+	}),
 	resolve({
 		preferBuiltins: true
 	}),
-	commonjs()
+	commonjs(),
+	globals()
 ];
-
 const dependencies = [].concat(
 	['fs', 'path', 'child_process'],
 	Object.keys(pkg.dependencies)
@@ -46,14 +36,11 @@ function external(id) {
 
 export default {
 	input:  'src/app/index.js',
-	watch:  {
-		include: 'src/**/*.js'
-	},
 	plugins,
 	external,
 	output: {
 		file:      pkg.main,
 		format:    'cjs',
-		sourcemap: true
+		sourcemap: 'inline'
 	}
 };

@@ -17,8 +17,9 @@ function indexOfLicense(inputLicense) {
 
 export default function askForPackageInfo(generator, props, pkg) {
 
-	const destinationRoot = generator.destinationRoot();
+	generator.log(`${pkg ? 'Editing' : 'Creation'} of package.json:`);
 
+	const destinationRoot = generator.destinationRoot();
 	const packagePrompts = [{
 		type:    'input',
 		name:    'name',
@@ -71,16 +72,6 @@ export default function askForPackageInfo(generator, props, pkg) {
 			[pkg, 'license', indexOfLicense],
 			[props, 'pkg', 'license', indexOfLicense],
 			0
-		)
-	}, {
-		type:    'input',
-		name:    'browsers',
-		message: 'browsers support:',
-		default: getValue(
-			[pkg, 'browsers'],
-			[pkg, 'engines', 'browsers'],
-			[props, 'pkg', 'browsers'],
-			'> 1%, last 2 versions, iOS > 7, Android > 4.4, not OperaMini all'
 		)
 	}];
 
