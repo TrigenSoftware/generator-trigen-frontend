@@ -15,7 +15,7 @@ or
 yarn global add yo generator-trigen-frontend
 ```
 
-Now yo can run generator
+Now you can run generator
 ```bash
 yo trigen-frontend
 ```
